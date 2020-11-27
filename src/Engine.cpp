@@ -70,6 +70,8 @@ void Engine::init()
 
     gui = new GUI();
     gui->init(window);
+
+    offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
 }
 
 void Engine::physics()
@@ -152,10 +154,13 @@ void Engine::render()
 
     /* Draw Background */
 
+    glm::vec3 offset2 = offset + (float)glfwGetTime() / 10.0f;
+
     glUseProgram(backgroundShader->getShaderProgram());
 
     glUniformMatrix4fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "offset"), 1, glm::value_ptr(offset2));
 
     background->playerPos = player->position;
     background->draw(backgroundShader, scaleDivisor);

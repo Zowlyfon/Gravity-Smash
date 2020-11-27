@@ -63,6 +63,8 @@ private:
     bool paused;
 
     GUI *gui;
+
+    glm::vec3 offset;
 };
 
 

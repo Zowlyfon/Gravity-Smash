@@ -7,6 +7,7 @@ in VS_OUT {
 } vs_out;
 
 uniform vec3 playerPos;
+uniform vec3 offset;
 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -180,6 +181,15 @@ vec3 fbm(vec3 vertex, vec3 modelColor) {
 }
 */
 
+vec3 fbm(vec3 pos, vec3 color) {
+    vec3 noise0 = snoise(pos) * color;
+    vec3 noise1 = snoise(pos * 2.0f) * color * 0.5f;
+    vec3 noise2 = snoise(pos * 4.0f) * color * 0.25f;
+    vec3 noise3 = snoise(pos * 8.0f) * color * 0.125f;
+    vec3 noise4 = snoise(pos * 16.0f) * color * (1.0f/16.0f);
+    return noise0 + noise1 + noise2 + noise3 + noise4;
+}
+
 void main() {
     /*
     vec3 FragPos = vs_out.FragPos;
@@ -191,6 +201,8 @@ void main() {
     FragColor = vec4(fragColor , 1.0f);
     */
 
+    //vec3 offset = vec3(0.0f);
+
     vec2 uv = vec2(vs_out.FragPos) / 10.0f;
 
     vec3 col = vec3(smoothstep(0.9, 1.0, 1. - cellular(uv * 20.).r));
@@ -198,12 +210,31 @@ void main() {
     vec3 noise = snoise(vs_out.FragPos) * vec3(0.8, 0.8, 0.8);
     vec3 noise2 = snoise(vs_out.FragPos / 2.0f) * vec3(0.8, 0.8, 0.8) / 2.0f;
 
-    vec3 noiser = snoise((vs_out.FragPos + 3.5f) / 128.0f) * vec3(0.75f, 0.0f, 0.0f);
-    vec3 noiseg = snoise((vs_out.FragPos + 6.7f) / 128.0f) * vec3(0.0f, 0.6f, 0.0f);
-    vec3 noiseb = snoise((vs_out.FragPos + 14.2f) / 128.0f) * vec3(0.0f, 0.0f, 0.5f);
+    //vec3 noiser = snoise((vs_out.FragPos + 3.5f) / 128.0f) * vec3(0.75f, 0.0f, 0.0f);
+    //vec3 noiseg = snoise((vs_out.FragPos + 6.7f) / 128.0f) * vec3(0.0f, 0.6f, 0.0f);
+    //vec3 noiseb = snoise((vs_out.FragPos + 14.2f) / 128.0f) * vec3(0.0f, 0.0f, 0.5f);
 
-    vec3 noiseMask = snoise((vs_out.FragPos + 12.3f) / 16.0f) * vec3(1.0f);
-    //vec3 noiseGrain = snoise((vs_out.FragPos + 72.3f) * 32.0f) * vec3(1.0f);
+    vec3 redPos = (vs_out.FragPos + offset + 3.5f) / 32.0f;
+    vec3 greenPos = (vs_out.FragPos + offset + 6.7f) / 32.0f;
+    vec3 bluePos = (vs_out.FragPos + offset + 14.2f) / 32.0f;
 
-    FragColor = vec4(abs(col) * (abs(noise) + abs(noise2)) + (abs(noiser) + abs(noiseg) + abs(noiseb)) * noiseMask, 1.0);
+    vec3 redCol = vec3(0.5f, 0.0f, 0.0f);
+    vec3 greenCol = vec3(0.0f, 0.3f, 0.0f);
+    vec3 blueCol = vec3(0.0f, 0.0f, 0.2f);
+
+    vec3 noiser = fbm(redPos + fbm(redPos + fbm(redPos, redCol), redCol), redCol);
+    vec3 noiseg = fbm(greenPos + fbm(greenPos + fbm(greenPos, greenCol), greenCol), greenCol);
+    vec3 noiseb = fbm(bluePos + fbm(bluePos + fbm(bluePos, blueCol), blueCol), blueCol);
+
+    vec3 maskPos = (vs_out.FragPos + offset) / 16.0f;
+    vec3 maskCol = vec3(1.0f);
+
+    vec3 noiseMask = fbm(maskPos + fbm(maskPos + fbm(maskPos, maskCol), maskCol), maskCol);
+
+    //vec3 noiseMask = snoise((vs_out.FragPos + 12.3f) / 16.0f) * vec3(1.0f);
+    //vec3 noiseGrain = snoise((vs_out.FragPos + 72.3f) / 8.0f) * vec3(1.0f);
+
+    FragColor = vec4(
+        abs(col) * (abs(noise) + abs(noise2)) +
+        (abs(noiser) + abs(noiseg) + abs(noiseb)) * noiseMask, 1.0);
 }
