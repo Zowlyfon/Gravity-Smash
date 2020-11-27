@@ -4,7 +4,7 @@
 
 #include "GUI.h"
 
-GUI::GUI()
+GUI::GUI() : prevtime(glfwGetTime()), numFrames(0), fps(0)
 {
 
 }
@@ -32,6 +32,18 @@ void GUI::draw(std::shared_ptr<PhysicsObject> player)
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    GLdouble time = glfwGetTime();
+    GLdouble deltaT = time - prevtime;
+    numFrames++;
+
+    if (deltaT >= 1.0f) {
+        //float secondsPerFrame = 1000.0f / float(numFrames);
+        fps = numFrames;
+        numFrames = 0;
+        prevtime = time;
+        //std::cout << "FPS: " << fps << std::endl;
+    }
+
     {
         ImGui::Begin("Stats");
         ImGui::Text("Mass: %.1f", player->mass);
@@ -43,6 +55,7 @@ void GUI::draw(std::shared_ptr<PhysicsObject> player)
         ImGui::Text("Velocity: %.2f, %.2f",
                     player->velocity.x,
                     player->velocity.y);
+        ImGui::Text("FPS: %.0f", fps);
         ImGui::End();
     }
 

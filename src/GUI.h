@@ -17,6 +17,10 @@ public:
     ~GUI();
     void init(GLFWwindow *window);
     void draw(std::shared_ptr<PhysicsObject> player);
+private:
+    GLdouble prevtime;
+    unsigned int numFrames;
+    float fps;
 };
 
 
