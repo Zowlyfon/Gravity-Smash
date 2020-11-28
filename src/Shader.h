@@ -22,7 +22,9 @@ public:
     ~Shader();
 
     GLuint getShaderProgram();
-
+    void setMat4(const GLchar *name, glm::mat4 *data);
+    void setVec3(const GLchar *name, glm::vec3 *data);
+    void setFloat(const GLchar *name, GLfloat data);
 private:
     int loadFile(std::string *fileName, std::string *data);
     void initShader(GLuint *shader, std::string *shaderSource, GLenum shaderType);

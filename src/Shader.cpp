@@ -79,7 +79,6 @@ int Shader::loadFile(std::string *fileName, std::string *data)
         file.open(*fileName);
         while (std::getline(file, line)) {
             data->append(line.append("\n"));
-            std::cout << line;
         }
         file.close();
     } catch (std::ifstream::failure &e) {
@@ -88,4 +87,25 @@ int Shader::loadFile(std::string *fileName, std::string *data)
     }
 
     return 0;
+}
+
+void Shader::setMat4(const GLchar *name, glm::mat4 *data)
+{
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name),
+                       1,
+                       GL_FALSE,
+                       glm::value_ptr(*data));
+}
+
+void Shader::setVec3(const GLchar *name, glm::vec3 *data)
+{
+    glUniform3fv(glGetUniformLocation(shaderProgram, name),
+                 1,
+                 glm::value_ptr(*data));
+}
+
+void Shader::setFloat(const GLchar *name, GLfloat data)
+{
+    glUniform1f(glGetUniformLocation(shaderProgram, name),
+                data);
 }

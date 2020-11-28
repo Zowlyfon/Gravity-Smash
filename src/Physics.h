@@ -15,20 +15,20 @@
 #include <execution>
 
 #include "Utility.h"
-#include "PhysicsObject.h"
+#include "GameObject.h"
 
 class Physics {
 public:
-    static void calculateGravity(std::vector<std::shared_ptr<PhysicsObject>> *worldObjects,
-                                 std::shared_ptr<PhysicsObject> player,
+    static void calculateGravity(std::vector<std::shared_ptr<GameObject>> *worldObjects,
+                                 std::shared_ptr<GameObject> player,
                                  GLdouble prevTime,
                                  GLdouble time);
 
-    static void calculateCollisions(std::vector<std::shared_ptr<PhysicsObject>> *worldObjects,
-                                    std::shared_ptr<PhysicsObject> player);
+    static void calculateCollisions(std::vector<std::shared_ptr<GameObject>> *worldObjects,
+                                    std::shared_ptr<GameObject> player);
 
-    static void calculateOutOfRange(std::vector<std::shared_ptr<PhysicsObject>> *worldObjects,
-                                    std::shared_ptr<PhysicsObject> player);
+    static void calculateOutOfRange(std::vector<std::shared_ptr<GameObject>> *worldObjects,
+                                    std::shared_ptr<GameObject> player);
 
     static GLfloat scaleFromMass(GLfloat mass);
 };

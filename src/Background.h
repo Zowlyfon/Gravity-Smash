@@ -11,7 +11,7 @@ public:
     Background();
     ~Background();
     void init() override;
-    void draw(Shader *shader, float playerSize) override;
+    void draw(float playerSize) override;
 
     glm::vec3 playerPos;
 

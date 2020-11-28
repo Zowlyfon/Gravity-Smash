@@ -20,8 +20,8 @@
 #include <execution>
 #include <memory>
 
-#include "Sphere.h"
-#include "PhysicsObject.h"
+#include "GameObject.h"
+#include "Asteroid.h"
 #include "Utility.h"
 #include "Shader.h"
 #include "Physics.h"
@@ -45,13 +45,13 @@ private:
 
     GLFWwindow *window;
 
-    Shader *shader;
-    Shader *backgroundShader;
+    std::shared_ptr<Shader> shader;
+    std::shared_ptr<Shader> backgroundShader;
 
-    std::vector<std::shared_ptr<PhysicsObject>> worldObjects;
+    std::vector<std::shared_ptr<GameObject>> worldObjects;
     Background *background;
 
-    std::shared_ptr<PhysicsObject> player;
+    std::shared_ptr<GameObject> player;
 
     GLdouble prevTime;
 

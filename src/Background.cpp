@@ -27,7 +27,7 @@ void Background::init()
     glEnableVertexAttribArray(0);
 }
 
-void Background::draw(Shader *shader, float playerSize)
+void Background::draw(float playerSize)
 {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

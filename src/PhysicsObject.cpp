@@ -5,7 +5,8 @@
 #include "PhysicsObject.h"
 
 PhysicsObject::PhysicsObject() :
-velocity(glm::vec3(0.0f)), mass(0.0f), dead(false), baseSize(1.0f), baseMass(1.0f)
+velocity(glm::vec3(0.0f)), mass(0.0f), dead(false), baseSize(1.0f),
+baseMass(1.0f), prevTime(glfwGetTime())
 {
 
 }

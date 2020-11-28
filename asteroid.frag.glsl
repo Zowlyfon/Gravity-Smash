@@ -12,6 +12,9 @@ uniform vec3 modelColor;
 uniform float playerScale;
 uniform vec3 viewPos;
 uniform vec3 offset;
+uniform float objScale;
+uniform vec3 objPos;
+uniform vec3 view;
 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -103,6 +106,18 @@ float snoise(vec3 v)
     m = m * m;
     return 105.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
     dot(p2,x2), dot(p3,x3) ) );
+}
+
+//https://www.iquilezles.org/www/articles/intersectors/intersectors.htm
+vec2 sphIntersect(vec3 ro, vec3 rd, vec3 ce, float ra)
+{
+    vec3 oc = ro - ce;
+    float b = dot(oc, rd);
+    float c = dot(oc, oc); - ra * ra;
+    float h = b * b - c;
+    if ( h < 0.0f ) return vec2(-1.0f);
+    h = sqrt(h);
+    return vec2(-b - h, -b + h);
 }
 
 void main()

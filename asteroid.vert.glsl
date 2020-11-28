@@ -11,7 +11,7 @@ out VS_OUT {
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec3 rOffset;
+uniform vec3 offset;
 uniform float objScale;
 
 

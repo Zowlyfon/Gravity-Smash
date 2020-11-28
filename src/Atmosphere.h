@@ -5,9 +5,14 @@
 #ifndef GAMEENGINE_ATMOSPHERE_H
 #define GAMEENGINE_ATMOSPHERE_H
 
+#include "IcoSphere.h"
 
-class Atmosphere {
-
+class Atmosphere : public IcoSphere {
+public:
+    Atmosphere(std::shared_ptr<Shader> newShader);
+    ~Atmosphere();
+    void draw(float playerSize) override;
+    void init() override;
 };
 
 

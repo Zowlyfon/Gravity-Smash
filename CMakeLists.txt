@@ -27,8 +27,6 @@ add_executable(GameEngine
         src/Utility.h
         src/PhysicsObject.cpp
         src/PhysicsObject.h
-        src/Sphere.cpp
-        src/Sphere.h
         src/Shader.cpp
         src/Shader.h
         src/Physics.cpp
@@ -42,7 +40,7 @@ add_executable(GameEngine
         imgui/backends/imgui_impl_glfw.h
         imgui/backends/imgui_impl_glfw.cpp
         imgui/backends/imgui_impl_opengl3.h
-        imgui/backends/imgui_impl_opengl3.cpp src/Background.cpp src/Background.h src/GUI.cpp src/GUI.h src/IcosphereStore.cpp src/IcosphereStore.h)
+        imgui/backends/imgui_impl_opengl3.cpp src/Background.cpp src/Background.h src/GUI.cpp src/GUI.h src/IcosphereStore.cpp src/IcosphereStore.h src/Atmosphere.cpp src/Atmosphere.h src/IcoSphere.cpp src/IcoSphere.h src/Asteroid.cpp src/Asteroid.h src/GameObject.cpp src/GameObject.h src/GameLevel.cpp src/GameLevel.h)
 
 target_link_libraries(GameEngine
         glad

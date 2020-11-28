@@ -13,7 +13,6 @@ shader(nullptr), player(nullptr), paused(false), prevScaleDivisor(0.0f)
 
 Engine::~Engine()
 {
-    delete shader;
 };
 
 void Engine::init()
@@ -23,11 +22,13 @@ void Engine::init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 8);
+    //glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
 
     window = glfwCreateWindow(screenWidth, screenHeight, "OpenGL", NULL, NULL);
 
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -36,24 +37,24 @@ void Engine::init()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 
-    shader = new Shader("asteroid.vert.glsl",
-                        "asteroid.frag.glsl");
+    shader = std::shared_ptr<Shader>(new Shader("asteroid.vert.glsl",
+                                                "asteroid.frag.glsl"));
 
-    backgroundShader = new Shader("background.vert.glsl",
-                                  "background.frag.glsl");
-
-    std::cout << "Shaders Loaded" << std::endl;
+    backgroundShader = std::shared_ptr<Shader>(new Shader("background.vert.glsl",
+                                                          "background.frag.glsl"));
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 
-    std::shared_ptr<PhysicsObject> playerSphere(new Sphere(256.0f, 128.0f, 6));
+    std::shared_ptr<GameObject> playerSphere(new Asteroid(6));
     player = playerSphere;
+
+    player->shader = shader;
 
     player->color = glm::vec3(0.15f, 0.14f, 0.14f);
     player->mass = 1.0f;
-    player->scale = Physics::scaleFromMass(50);
-    player->position = glm::vec3(0.0f, 0.0f, 0.0f);
+    player->PhysicsObject::scale = Physics::scaleFromMass(50);
+    player->PhysicsObject::position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     player->init();
 
@@ -66,6 +67,7 @@ void Engine::init()
     }
 
     background = new Background();
+    background->shader = backgroundShader;
     background->init();
 
     gui = new GUI();
@@ -94,7 +96,7 @@ void Engine::physics()
         worldObjects.begin(),
         worldObjects.end(),
         [=](auto &&object) {
-            return (object->dead || (object->scale < player->scale / 32.0f));
+            return (object->dead || (object->PhysicsObject::scale < player->PhysicsObject::scale / 32.0f));
         }),
         worldObjects.end()
       );
@@ -111,7 +113,7 @@ void Engine::physics()
     }
 
     for (const auto &object : worldObjects) {
-        object->scale = Physics::scaleFromMass(object->mass);
+        object->PhysicsObject::scale = Physics::scaleFromMass(object->mass);
     }
 }
 
@@ -146,10 +148,10 @@ void Engine::render()
       100.0f);
 
     //glm::vec3 cameraPos = glm::vec3(player->position.x, player->position.y, player->scale * 15.0f + 15.0f);
-    glm::vec3 cameraPos = glm::vec3(player->position.x / scaleDivisor, player->position.y / scaleDivisor, 25.0f);
+    glm::vec3 cameraPos = glm::vec3(player->RenderObject::position.x / scaleDivisor, player->RenderObject::position.y / scaleDivisor, 25.0f);
 
     view = glm::lookAt(cameraPos,
-                       player->position / scaleDivisor,
+                       player->RenderObject::position / scaleDivisor,
                        glm::vec3(0.0f, 1.0f, 0.0f));
 
     /* Draw Background */
@@ -162,8 +164,8 @@ void Engine::render()
     glUniformMatrix4fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniform3fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "offset"), 1, glm::value_ptr(offset2));
 
-    background->playerPos = player->position;
-    background->draw(backgroundShader, scaleDivisor);
+    background->playerPos = player->RenderObject::position;
+    background->draw(scaleDivisor);
 
     /* Render Objects */
 
@@ -174,15 +176,15 @@ void Engine::render()
     glUniformMatrix4fv(glGetUniformLocation(shader->getShaderProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(glGetUniformLocation(shader->getShaderProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-    glm::vec3 lightPos = glm::vec3(player->position.x / scaleDivisor, player->position.y / scaleDivisor, 5.0f);
+    glm::vec3 lightPos = glm::vec3(player->RenderObject::position.x / scaleDivisor, player->RenderObject::position.y / scaleDivisor, 5.0f);
     glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
-    glUniform1f(glGetUniformLocation(shader->getShaderProgram(), "playerScale"), player->scale);
+    glUniform1f(glGetUniformLocation(shader->getShaderProgram(), "playerScale"), player->RenderObject::scale);
 
     //glm::mat4 model = glm::mat4(1.0f);
     //glUniformMatrix4fv(glGetUniformLocation(shader->getShaderProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 
     for (auto const &object : worldObjects) {
-        object->draw(shader, scaleDivisor);
+        object->draw(scaleDivisor);
     }
 
     /* Draw GUI */
@@ -209,7 +211,7 @@ void Engine::frameBufferSizeCallback(GLFWwindow *window, int width, int height)
 
 void Engine::processInput(GLFWwindow *window)
 {
-    GLfloat step = player->scale * 0.1;
+    GLfloat step = player->PhysicsObject::scale * 0.1;
 
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         player->velocity.y += step;
@@ -231,25 +233,21 @@ void Engine::processInput(GLFWwindow *window)
 
 void Engine::createRandomSphere()
 {
-    std::shared_ptr<PhysicsObject> sphere(new Sphere(128.0f, 64.0f));
-    /*
-    sphere->color = glm::vec3(Utility::randF2(),
-                              Utility::randF2(),
-                              Utility::randF2());
-                              */
+    std::shared_ptr<GameObject> sphere(new Asteroid());
+    sphere->shader = shader;
     sphere->color = glm::vec3(0.15f, 0.14f, 0.14f);
     sphere->color += glm::vec3(Utility::randF() / 20.0f,
                                Utility::randF() / 100.0f,
                                Utility::randF() / 100.0f);
 
     sphere->mass = (Utility::bias(Utility::randF2(), 0.9f)) * player->mass * 200.0f + player->mass / 16;
-    sphere->scale = Physics::scaleFromMass(sphere->mass);
-    sphere->position = glm::vec3(Utility::randF() * sphere->scale * 100.0f + player->position.x,
-                                 Utility::randF() * sphere->scale * 100.0f + player->position.y,
+    sphere->PhysicsObject::scale = Physics::scaleFromMass(sphere->mass);
+    sphere->PhysicsObject::position = glm::vec3(Utility::randF() * sphere->PhysicsObject::scale * 100.0f + player->PhysicsObject::position.x,
+                                 Utility::randF() * sphere->PhysicsObject::scale * 100.0f + player->PhysicsObject::position.y,
                                  0.0f);
 
-    sphere->velocity = glm::vec3(Utility::randF() / (sphere->scale * 4),
-                                 Utility::randF() / (sphere->scale * 4),
+    sphere->velocity = glm::vec3(Utility::randF() / (sphere->PhysicsObject::scale * 4),
+                                 Utility::randF() / (sphere->PhysicsObject::scale * 4),
                                  0.0f);
 
     sphere->init();

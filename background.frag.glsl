@@ -158,29 +158,6 @@ float snoise(vec3 v)
     dot(p2,x2), dot(p3,x3) ) );
 }
 
-/*
-vec3 fbm(vec3 vertex, vec3 modelColor) {
-    float scaleFactor = 0.5f;
-    //float scaleFactor = 0.15f;
-
-    //vec3 offset = vec3(0.1f);
-
-    //vec3 noisea = snoise(vertex / 4.0f) * modelColor * scaleFactor * 16.0f;
-    //vec3 noise0 = snoise(vertex) * modelColor * scaleFactor;
-    //vec3 noise1 = snoise((vertex) * 2.0f) * modelColor  * (scaleFactor / 2.0f);
-    //vec3 noise2 = snoise((vertex) * 4.0f) * modelColor  * (scaleFactor * 8.0f);
-    //vec3 noise3 = snoise((vertex) * 8.0f) * modelColor  * (scaleFactor / 8.0f);
-    //vec3 noise4 = snoise((vertex) * 16.0f) * modelColor  * (scaleFactor / 16.0f);
-    //vec3 noise5 = snoise((vertex) * 32.0f) * modelColor  * (scaleFactor / 32.0f);
-
-    vec3 noise0 = snoise(vertex / 8.0f) * modelColor * scaleFactor * 16.0f;
-    vec3 noise1 = snoise(vertex * 4.0f) * modelColor * scaleFactor * 16.0f;
-    vec3 noise2 = snoise(vertex / 16.0f) * modelColor * scaleFactor * 16.0f;
-
-    return noise1 - abs(noise0) - abs(noise2);
-}
-*/
-
 vec3 fbm(vec3 pos, vec3 color) {
     vec3 noise0 = snoise(pos) * color;
     vec3 noise1 = snoise(pos * 2.0f) * color * 0.5f;
@@ -191,28 +168,12 @@ vec3 fbm(vec3 pos, vec3 color) {
 }
 
 void main() {
-    /*
-    vec3 FragPos = vs_out.FragPos;
-    vec3 modelColor = vec3(0.05f, 0.05f, 0.05f);
-
-
-    vec3 fragColor = modelColor + fbm(FragPos, modelColor);
-
-    FragColor = vec4(fragColor , 1.0f);
-    */
-
-    //vec3 offset = vec3(0.0f);
-
     vec2 uv = vec2(vs_out.FragPos) / 10.0f;
 
     vec3 col = vec3(smoothstep(0.9, 1.0, 1. - cellular(uv * 20.).r));
 
     vec3 noise = snoise(vs_out.FragPos) * vec3(0.8, 0.8, 0.8);
     vec3 noise2 = snoise(vs_out.FragPos / 2.0f) * vec3(0.8, 0.8, 0.8) / 2.0f;
-
-    //vec3 noiser = snoise((vs_out.FragPos + 3.5f) / 128.0f) * vec3(0.75f, 0.0f, 0.0f);
-    //vec3 noiseg = snoise((vs_out.FragPos + 6.7f) / 128.0f) * vec3(0.0f, 0.6f, 0.0f);
-    //vec3 noiseb = snoise((vs_out.FragPos + 14.2f) / 128.0f) * vec3(0.0f, 0.0f, 0.5f);
 
     vec3 redPos = (vs_out.FragPos + offset + 3.5f) / 32.0f;
     vec3 greenPos = (vs_out.FragPos + offset + 6.7f) / 32.0f;
@@ -231,8 +192,6 @@ void main() {
 
     vec3 noiseMask = fbm(maskPos + fbm(maskPos + fbm(maskPos, maskCol), maskCol), maskCol);
 
-    //vec3 noiseMask = snoise((vs_out.FragPos + 12.3f) / 16.0f) * vec3(1.0f);
-    //vec3 noiseGrain = snoise((vs_out.FragPos + 72.3f) / 8.0f) * vec3(1.0f);
 
     FragColor = vec4(
         abs(col) * (abs(noise) + abs(noise2)) +

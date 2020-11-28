@@ -25,14 +25,18 @@ public:
     RenderObject();
     ~RenderObject();
     virtual void init();
-    virtual void draw(Shader *shader, float playerSize);
-    virtual void calculateNormals();
+    virtual void draw(float playerSize);
 
     glm::vec3 position;
     glm::vec3 color;
     GLfloat scale;
 
+    std::shared_ptr<Shader> shader;
+
 protected:
+    virtual void initBuffers();
+    virtual void calculateNormals();
+
     std::vector<glm::vec4> vertices;
     std::vector<glm::vec3> normals;
     std::vector<GLuint> indices;
