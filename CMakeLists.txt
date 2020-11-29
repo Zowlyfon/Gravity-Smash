@@ -40,7 +40,7 @@ add_executable(GameEngine
         imgui/backends/imgui_impl_glfw.h
         imgui/backends/imgui_impl_glfw.cpp
         imgui/backends/imgui_impl_opengl3.h
-        imgui/backends/imgui_impl_opengl3.cpp src/Background.cpp src/Background.h src/GUI.cpp src/GUI.h src/IcosphereStore.cpp src/IcosphereStore.h src/Atmosphere.cpp src/Atmosphere.h src/IcoSphere.cpp src/IcoSphere.h src/Asteroid.cpp src/Asteroid.h src/GameObject.cpp src/GameObject.h src/GameLevel.cpp src/GameLevel.h)
+        imgui/backends/imgui_impl_opengl3.cpp src/Background.cpp src/Background.h src/GUI.cpp src/GUI.h src/IcosphereStore.cpp src/IcosphereStore.h src/Atmosphere.cpp src/Atmosphere.h src/IcoSphere.cpp src/IcoSphere.h src/Asteroid.cpp src/Asteroid.h src/GameObject.cpp src/GameObject.h src/GameLevel.cpp src/GameLevel.h src/DwarfPlanet.cpp src/DwarfPlanet.h src/AsteroidLevel.cpp src/AsteroidLevel.h)
 
 target_link_libraries(GameEngine
         glad
@@ -56,4 +56,11 @@ configure_file(asteroid.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/asteroid.vert.glsl
 #configure_file(geometry.glsl ${CMAKE_CURRENT_BINARY_DIR}/geometry.glsl COPYONLY)
 configure_file(background.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/background.frag.glsl COPYONLY)
 configure_file(background.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/background.vert.glsl COPYONLY)
-configure_file(addSimplexNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/addSimplexNoise.comp.glsl COPYONLY)
+configure_file(asteroidNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/asteroidNoise.comp.glsl COPYONLY)
+configure_file(planetNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/planetNoise.comp.glsl COPYONLY)
+configure_file(planet.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/planet.frag.glsl COPYONLY)
+configure_file(planet.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/planet.vert.glsl COPYONLY)
+configure_file(atmosphere.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/atmosphere.frag.glsl COPYONLY)
+configure_file(atmosphere.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/atmosphere.vert.glsl COPYONLY)
+configure_file(gasGiant.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/gasGiant.frag.glsl COPYONLY)
+configure_file(gasGiant.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/gasGiant.vert.glsl COPYONLY)

@@ -7,7 +7,12 @@
 
 
 class GameLevel {
+public:
+    virtual void init()=0;
+    virtual void endCond()=0;
+    virtual void end()=0;
 
+    virtual void addNewGameObject()=0;
 };
 
 

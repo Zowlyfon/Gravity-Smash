@@ -9,7 +9,7 @@
 
 class Atmosphere : public IcoSphere {
 public:
-    Atmosphere(std::shared_ptr<Shader> newShader);
+    Atmosphere();
     ~Atmosphere();
     void draw(float playerSize) override;
     void init() override;

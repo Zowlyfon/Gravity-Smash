@@ -47,6 +47,7 @@ private:
 
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Shader> backgroundShader;
+    std::shared_ptr<ComputeShader> computeShader;
 
     std::vector<std::shared_ptr<GameObject>> worldObjects;
     Background *background;

@@ -43,13 +43,18 @@ void Engine::init()
     backgroundShader = std::shared_ptr<Shader>(new Shader("background.vert.glsl",
                                                           "background.frag.glsl"));
 
+    computeShader = std::shared_ptr<ComputeShader>(new ComputeShader("asteroidNoise.comp.glsl"));
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::shared_ptr<GameObject> playerSphere(new Asteroid(6));
     player = playerSphere;
 
     player->shader = shader;
+    player->computeShader = computeShader;
 
     player->color = glm::vec3(0.15f, 0.14f, 0.14f);
     player->mass = 1.0f;
@@ -121,19 +126,19 @@ void Engine::render()
 {
     glfwPollEvents();
 
-    float scaleDivisor;
+    float scaleFactor;
 
     if (prevScaleDivisor < player->baseSize &&
-    prevScaleDivisor + player->baseSize / 100.0f < player->baseSize) {
-        scaleDivisor = prevScaleDivisor + player->baseSize / 100.0f;
+    prevScaleDivisor + player->baseSize / 100.0f <= player->baseSize) {
+        scaleFactor = prevScaleDivisor + player->baseSize / 100.0f;
     } else if (prevScaleDivisor > player->baseSize &&
-    prevScaleDivisor - player->baseSize / 100.0f > player->baseSize) {
-        scaleDivisor = prevScaleDivisor - player->baseSize / 100.0f;
+    prevScaleDivisor - player->baseSize / 100.0f >= player->baseSize) {
+        scaleFactor = prevScaleDivisor - player->baseSize / 100.0f;
     } else {
-        scaleDivisor = player->baseSize;
+        scaleFactor = player->baseSize;
     }
 
-    prevScaleDivisor = scaleDivisor;
+    prevScaleDivisor = scaleFactor;
 
     glClearColor(0.05f, 0.05f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -148,10 +153,10 @@ void Engine::render()
       100.0f);
 
     //glm::vec3 cameraPos = glm::vec3(player->position.x, player->position.y, player->scale * 15.0f + 15.0f);
-    glm::vec3 cameraPos = glm::vec3(player->RenderObject::position.x / scaleDivisor, player->RenderObject::position.y / scaleDivisor, 25.0f);
+    glm::vec3 cameraPos = glm::vec3(player->RenderObject::position.x / scaleFactor, player->RenderObject::position.y / scaleFactor, 25.0f);
 
     view = glm::lookAt(cameraPos,
-                       player->RenderObject::position / scaleDivisor,
+                       player->RenderObject::position / scaleFactor,
                        glm::vec3(0.0f, 1.0f, 0.0f));
 
     /* Draw Background */
@@ -164,27 +169,32 @@ void Engine::render()
     glUniformMatrix4fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniform3fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "offset"), 1, glm::value_ptr(offset2));
 
+    glDisable(GL_CULL_FACE);
+
     background->playerPos = player->RenderObject::position;
-    background->draw(scaleDivisor);
+    background->draw(scaleFactor);
+
+    glEnable(GL_CULL_FACE);
 
     /* Render Objects */
+
+    glm::vec3 lightPos = glm::vec3(player->RenderObject::position.x / scaleFactor, player->RenderObject::position.y / scaleFactor, 5.0f);
 
     glUseProgram(shader->getShaderProgram());
 
     glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "viewPos"), 1, glm::value_ptr(cameraPos));
 
-    glUniformMatrix4fv(glGetUniformLocation(shader->getShaderProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(glGetUniformLocation(shader->getShaderProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+    shader->setMat4("projection", &projection);
+    shader->setMat4("view", &view);
 
-    glm::vec3 lightPos = glm::vec3(player->RenderObject::position.x / scaleDivisor, player->RenderObject::position.y / scaleDivisor, 5.0f);
+
     glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
     glUniform1f(glGetUniformLocation(shader->getShaderProgram(), "playerScale"), player->RenderObject::scale);
 
-    //glm::mat4 model = glm::mat4(1.0f);
-    //glUniformMatrix4fv(glGetUniformLocation(shader->getShaderProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
 
     for (auto const &object : worldObjects) {
-        object->draw(scaleDivisor);
+        object->draw(scaleFactor);
     }
 
     /* Draw GUI */
@@ -198,6 +208,7 @@ void Engine::run()
 {
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
+
         physics();
 
         render();
@@ -235,6 +246,7 @@ void Engine::createRandomSphere()
 {
     std::shared_ptr<GameObject> sphere(new Asteroid());
     sphere->shader = shader;
+    sphere->computeShader = computeShader;
     sphere->color = glm::vec3(0.15f, 0.14f, 0.14f);
     sphere->color += glm::vec3(Utility::randF() / 20.0f,
                                Utility::randF() / 100.0f,
@@ -244,7 +256,7 @@ void Engine::createRandomSphere()
     sphere->PhysicsObject::scale = Physics::scaleFromMass(sphere->mass);
     sphere->PhysicsObject::position = glm::vec3(Utility::randF() * sphere->PhysicsObject::scale * 100.0f + player->PhysicsObject::position.x,
                                  Utility::randF() * sphere->PhysicsObject::scale * 100.0f + player->PhysicsObject::position.y,
-                                 0.0f);
+                                 Utility::randF() * 100.0f);
 
     sphere->velocity = glm::vec3(Utility::randF() / (sphere->PhysicsObject::scale * 4),
                                  Utility::randF() / (sphere->PhysicsObject::scale * 4),

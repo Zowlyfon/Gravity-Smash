@@ -4,10 +4,8 @@
 
 #include "Atmosphere.h"
 
-Atmosphere::Atmosphere(std::shared_ptr<Shader> newShader)
-{
-    shader = newShader;
-}
+Atmosphere::Atmosphere()
+{}
 
 Atmosphere::~Atmosphere()=default;
 
@@ -15,14 +13,8 @@ void Atmosphere::init()
 {
     subs = 3;
 
-    createIcosahedron();
-
-    for (int i = 0; i < subs; i++) {
-        subdivideMesh();
-    }
-
-    originalVertices = vertices;
-
+    initIcosphere();
+    calculateNormals();
     initBuffers();
 }
 
@@ -32,8 +24,14 @@ void Atmosphere::draw(float playerSize)
 
     model = glm::translate(model, position / playerSize);
     model = glm::scale(model, glm::vec3(scale / playerSize));
-
     glm::vec3 objPos = position / playerSize;
 
+    glUseProgram(shader->getShaderProgram());
     shader->setMat4("model", &model);
+    shader->setVec3("objPos", &objPos);
+    shader->setFloat("objSize", scale / playerSize);
+    //shader->setVec3("modelColor", &color);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

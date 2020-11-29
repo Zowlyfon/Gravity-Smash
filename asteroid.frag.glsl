@@ -12,8 +12,6 @@ uniform vec3 modelColor;
 uniform float playerScale;
 uniform vec3 viewPos;
 uniform vec3 offset;
-uniform float objScale;
-uniform vec3 objPos;
 uniform vec3 view;
 
 vec3 mod289(vec3 x) {

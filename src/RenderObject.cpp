@@ -90,3 +90,8 @@ void RenderObject::initBuffers()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
+
+void RenderObject::runComputeShader()
+{
+
+}

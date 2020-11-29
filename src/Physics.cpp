@@ -19,7 +19,7 @@ void Physics::calculateGravity(std::vector<std::shared_ptr<GameObject>> *worldOb
                 glm::vec2 r1 = glm::vec2(object1->PhysicsObject::position.x, object1->PhysicsObject::position.y);
                 glm::vec2 r2 = glm::vec2(object2->PhysicsObject::position.x, object2->PhysicsObject::position.y);
 
-                GLfloat distance = glm::length(r1 - r2);
+                GLfloat distance = glm::length(object1->PhysicsObject::position - object2->PhysicsObject::position);
 
                 glm::vec2 unitVec = glm::normalize(r1 - r2);
 

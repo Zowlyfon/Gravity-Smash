@@ -1,19 +1,13 @@
-#version 460
-out vec4 FragColor;
+#version 460 core
 
-in VS_OUT {
-    vec3 FragPos;
-    vec3 Normal;
-    vec4 aPos;
-} vs_out;
+layout(local_size_x = 256) in;
 
-uniform vec3 lightPos;
-uniform vec3 modelColor;
-uniform float playerScale;
-uniform vec3 viewPos;
+layout(std430, binding = 0) buffer Vertex {
+    vec4 outVertices[];
+};
+
 uniform vec3 offset;
-uniform vec3 view;
-
+uniform float objScale;
 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -107,41 +101,31 @@ float snoise(vec3 v)
     dot(p2,x2), dot(p3,x3) ) );
 }
 
+vec3 fbm(vec3 vertex) {
+    float scaleFactor = min(sqrt(1 / (objScale)), 0.05f);
+    float scaleFactor2 = 0.1f;
+    float scaleFactor3 = 0.05f;
+    //float scaleFactor = 0.15f;
+
+    //vec3 offset = vec3(0.1f);
+    vec3 offset2 = offset + snoise(offset) * offset;
+
+    vec3 noise0 = snoise(vertex + offset2) * vertex * scaleFactor2;
+    vec3 noise1 = snoise((vertex + offset2) * 2.0f) * vertex * (scaleFactor2 / 2.0f);
+    vec3 noise2 = snoise((vertex + offset2) * 4.0f) * vertex * (scaleFactor2 / 4.0f);
+    vec3 noise3 = snoise((vertex + offset2) * 8.0f) * vertex * (scaleFactor3 / 8.0f);
+    vec3 noise4 = snoise((vertex + offset2) * 16.0f) * vertex * (scaleFactor3 / 16.0f);
+    vec3 noise5 = snoise((vertex + offset2) * 32.0f) * vertex * (scaleFactor3 / 32.0f);
+
+    vec3 noiseMask = snoise(vertex + offset2 + 2.5f) * vertex;
+
+    return (noise0 + noise1 + noise2) * noiseMask + noise3  + noise4 + noise5;
+}
+
 void main() {
-    vec3 FragPos = vs_out.FragPos;
 
-    float scaleFactor = 0.5f;
+    vec3 vertex = vec3(outVertices[gl_GlobalInvocationID.x]);
 
-    vec3 noise0 = snoise((vec3(vs_out.aPos) + offset) * 2.0f) * modelColor * (scaleFactor / 2.0f);
-    vec3 noise1 = snoise((vec3(vs_out.aPos) + offset) * 16.0f) * modelColor * (scaleFactor / 4.0f);
-    vec3 noise2 = snoise((vec3(vs_out.aPos) + offset) * 32.0f) * modelColor * (scaleFactor / 8.0f);
-    vec3 noise3 = snoise((vec3(vs_out.aPos) + offset) * 64.0f) * modelColor * (scaleFactor / 16.0f);
+    outVertices[gl_GlobalInvocationID.x] = vec4(vertex + fbm(vertex + fbm(vertex + fbm(vertex + fbm(vertex)))), 1.0f);
 
-    vec3 fragColor = modelColor + noise0 + noise1 + noise2 + noise3;
-
-    float ambientStrength = 0.001f;
-    vec3 ambient = ambientStrength * vec3(1.0f);
-
-    vec3 norm = normalize(vs_out.Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0f);
-
-    float distance = length(lightPos - FragPos);
-    float attenuation = 1.0f / (0.05 * distance * distance);
-
-    vec3 diffuse = diff * vec3(1.0f, 1.0f, 1.0f) * attenuation;
-
-    float specularStrength = 0.01f;
-
-    vec3 viewDir = normalize(viewPos - vs_out.FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 32.0f);
-
-    vec3 specular = specularStrength * spec * vec3(1.0f);
-
-
-    vec3 result = (ambient + diffuse + specular) * fragColor;
-
-    float gamma = 2.2f;
-    FragColor = vec4(pow(result, vec3(1.0f/gamma)), 1.0f);
 }

@@ -14,7 +14,6 @@ uniform vec3 viewPos;
 uniform vec3 offset;
 uniform vec3 view;
 
-
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
@@ -107,17 +106,21 @@ float snoise(vec3 v)
     dot(p2,x2), dot(p3,x3) ) );
 }
 
-void main() {
+vec3 fbm(vec3 pos, vec3 color) {
+    vec3 noise0 = snoise(pos + offset) * color;
+    vec3 noise1 = snoise((pos + offset) * 2.0f) * color * 0.5f;
+    vec3 noise2 = snoise((pos + offset) * 4.0f) * color * 0.25f;
+    vec3 noise3 = snoise((pos + offset) * 8.0f) * color * 0.125f;
+    vec3 noise4 = snoise((pos + offset) * 16.0f) * color * (1.0f/16.0f);
+    return noise0 + noise1 + noise2 + noise3 + noise4;
+}
+
+void main()
+{
     vec3 FragPos = vs_out.FragPos;
+    vec3 aPos = vs_out.aPos.xyz;
 
-    float scaleFactor = 0.5f;
-
-    vec3 noise0 = snoise((vec3(vs_out.aPos) + offset) * 2.0f) * modelColor * (scaleFactor / 2.0f);
-    vec3 noise1 = snoise((vec3(vs_out.aPos) + offset) * 16.0f) * modelColor * (scaleFactor / 4.0f);
-    vec3 noise2 = snoise((vec3(vs_out.aPos) + offset) * 32.0f) * modelColor * (scaleFactor / 8.0f);
-    vec3 noise3 = snoise((vec3(vs_out.aPos) + offset) * 64.0f) * modelColor * (scaleFactor / 16.0f);
-
-    vec3 fragColor = modelColor + noise0 + noise1 + noise2 + noise3;
+    vec3 fragColor = modelColor + fbm(aPos + fbm(aPos + fbm(aPos, modelColor), modelColor), modelColor);
 
     float ambientStrength = 0.001f;
     vec3 ambient = ambientStrength * vec3(1.0f);

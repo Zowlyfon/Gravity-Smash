@@ -19,6 +19,7 @@
 
 #include "Shader.h"
 #include "Utility.h"
+#include "ComputeShader.h"
 
 class RenderObject {
 public:
@@ -32,10 +33,12 @@ public:
     GLfloat scale;
 
     std::shared_ptr<Shader> shader;
+    std::shared_ptr<ComputeShader> computeShader;
 
 protected:
     virtual void initBuffers();
     virtual void calculateNormals();
+    virtual void runComputeShader();
 
     std::vector<glm::vec4> vertices;
     std::vector<glm::vec3> normals;
