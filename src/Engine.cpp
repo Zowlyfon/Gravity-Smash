@@ -33,7 +33,7 @@ void Engine::init()
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, screenWidth, screenHeight);
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 
     /*
@@ -72,7 +72,15 @@ void Engine::init()
     }
     */
 
-    activeGameLevel = new AsteroidLevel(window);
+    gui = new GUI();
+    gui->init(window);
+
+    gameLevels.push_back(std::make_shared<GasGiantLevel>(window, gui));
+    //gameLevels.push_back(std::make_shared<SmallPlanetLevel>(window, gui));
+    //gameLevels.push_back(std::make_shared<AsteroidLevel>(window, gui));
+
+    activeGameLevel = gameLevels.back();
+    gameLevels.pop_back();
 
     activeGameLevel->init();
 
@@ -229,6 +237,17 @@ void Engine::run()
         activeGameLevel->run();
 
         render();
+
+        if (activeGameLevel->endCond()) {
+            if (gameLevels.empty()) {
+                glfwSetWindowShouldClose(window, true);
+            } else {
+                activeGameLevel = gameLevels.back();
+                gameLevels.pop_back();
+
+                activeGameLevel->init();
+            }
+        }
     }
 }
 

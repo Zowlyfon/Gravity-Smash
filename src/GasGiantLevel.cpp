@@ -1,31 +1,28 @@
 //
-// Created by zowlyfon on 29/11/2020.
+// Created by zowlyfon on 01/12/2020.
 //
 
-#include "AsteroidLevel.h"
+#include "GasGiantLevel.h"
 
-AsteroidLevel::AsteroidLevel(GLFWwindow *window, GUI *gui) : GameLevel(window, gui)
+GasGiantLevel::GasGiantLevel(GLFWwindow *window, GUI *gui) : GameLevel(window, gui)
 {
 
 }
 
-AsteroidLevel::~AsteroidLevel()
+GasGiantLevel::~GasGiantLevel()
 = default;
 
-void AsteroidLevel::init()
+void GasGiantLevel::init()
 {
-
-    shader = new Shader("asteroid.vert.glsl",
-                        "asteroid.frag.glsl");
-
-    computeShader = new ComputeShader("asteroidNoise.comp.glsl");
+    shader = new Shader("gasGiant.vert.glsl",
+                        "gasGiant.frag.glsl");
 
     backgroundShader = new Shader("background.vert.glsl",
                                   "background.frag.glsl");
 
-    player = std::make_shared<Asteroid>(shader, computeShader, 6);
+    player = std::make_shared<GasGiant>(shader, 6);
 
-    player->color = glm::vec3(0.15f, 0.14f, 0.14f);
+    player->color = glm::vec3(0.8f, 0.1f, 0.1f);
     player->mass = 1.0f;
     player->PhysicsObject::scale = Physics::scaleFromMass(50);
     player->PhysicsObject::position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -44,8 +41,9 @@ void AsteroidLevel::init()
     offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
 }
 
-void AsteroidLevel::run()
+void GasGiantLevel::run()
 {
+    time = glfwGetTime();
     GLfloat random = Utility::randF2();
 
     if (random > 0.95 && worldObjects.size() < GameSettings::maxObjects) {
@@ -55,28 +53,28 @@ void AsteroidLevel::run()
         }
     }
 
-    time = glfwGetTime();
     physics();
     draw();
     prevTime = time;
 }
 
-bool AsteroidLevel::endCond()
+bool GasGiantLevel::endCond()
 {
-    return player->PhysicsObject::scale >= 1000.0f;
+    return player->PhysicsObject::scale > 25000.0f;
 }
 
-void AsteroidLevel::end()
+void GasGiantLevel::end()
 {
+
 }
 
-void AsteroidLevel::addNewGameObject()
+void GasGiantLevel::addNewGameObject()
 {
-    std::shared_ptr<GameObject> sphere(new Asteroid(shader, computeShader));
-    sphere->color = glm::vec3(0.15f, 0.14f, 0.14f);
-    sphere->color += glm::vec3(Utility::randF() / 20.0f,
-                               Utility::randF() / 100.0f,
-                               Utility::randF() / 100.0f);
+    std::shared_ptr<GameObject> sphere(new GasGiant(shader));
+    sphere->color = glm::vec3(0.5f, 0.5f, 0.5f);
+    sphere->color += glm::vec3(Utility::randF() / 2.5f,
+                               Utility::randF() / 2.5f,
+                               Utility::randF() / 2.5f);
 
     sphere->mass = (Utility::bias(Utility::randF2(), 0.9f)) * player->mass * 200.0f + player->mass / 16;
     sphere->PhysicsObject::scale = Physics::scaleFromMass(sphere->mass);

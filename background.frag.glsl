@@ -172,12 +172,14 @@ void main() {
 
     vec3 col = vec3(smoothstep(0.9, 1.0, 1. - cellular(uv * 20.).r));
 
+    vec3 FragPos = vs_out.FragPos;
+
     vec3 noise = snoise(vs_out.FragPos) * vec3(0.8, 0.8, 0.8);
     vec3 noise2 = snoise(vs_out.FragPos / 2.0f) * vec3(0.8, 0.8, 0.8) / 2.0f;
 
-    vec3 redPos = (vs_out.FragPos + offset + 3.5f) / 32.0f;
-    vec3 greenPos = (vs_out.FragPos + offset + 6.7f) / 32.0f;
-    vec3 bluePos = (vs_out.FragPos + offset + 14.2f) / 32.0f;
+    vec3 redPos = (FragPos + offset + 3.5f) / 32.0f;
+    vec3 greenPos = (FragPos + offset + 6.7f) / 32.0f;
+    vec3 bluePos = (FragPos + offset + 14.2f) / 32.0f;
 
     vec3 redCol = vec3(0.5f, 0.0f, 0.0f);
     vec3 greenCol = vec3(0.0f, 0.3f, 0.0f);
@@ -187,7 +189,7 @@ void main() {
     vec3 noiseg = fbm(greenPos + fbm(greenPos + fbm(greenPos, greenCol), greenCol), greenCol);
     vec3 noiseb = fbm(bluePos + fbm(bluePos + fbm(bluePos, blueCol), blueCol), blueCol);
 
-    vec3 maskPos = (vs_out.FragPos + offset) / 16.0f;
+    vec3 maskPos = (FragPos + offset) / 16.0f;
     vec3 maskCol = vec3(1.0f);
 
     vec3 noiseMask = fbm(maskPos + fbm(maskPos + fbm(maskPos, maskCol), maskCol), maskCol);

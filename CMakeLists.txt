@@ -46,7 +46,23 @@ add_executable(GameEngine
         src/GUI.h src/IcosphereStore.cpp
         src/IcosphereStore.h
         src/Atmosphere.cpp
-        src/Atmosphere.h src/IcoSphere.cpp src/IcoSphere.h src/Asteroid.cpp src/Asteroid.h src/GameObject.cpp src/GameObject.h src/GameLevel.cpp src/GameLevel.h src/DwarfPlanet.cpp src/DwarfPlanet.h src/AsteroidLevel.cpp src/AsteroidLevel.h src/GameSettings.cpp src/GameSettings.h)
+        src/Atmosphere.h
+        src/IcoSphere.cpp
+        src/IcoSphere.h
+        src/Asteroid.cpp
+        src/Asteroid.h
+        src/GameObject.cpp
+        src/GameObject.h
+        src/GameLevel.cpp
+        src/GameLevel.h
+        src/AsteroidLevel.cpp
+        src/AsteroidLevel.h
+        src/GameSettings.cpp
+        src/GameSettings.h
+        src/SmallPlanetLevel.cpp
+        src/SmallPlanetLevel.h
+        src/SmallPlanet.cpp
+        src/SmallPlanet.h src/GasGiant.cpp src/GasGiant.h src/GasGiantLevel.cpp src/GasGiantLevel.h src/MenuLevel.cpp src/MenuLevel.h)
 
 target_link_libraries(GameEngine
         glad

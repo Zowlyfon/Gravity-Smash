@@ -13,7 +13,7 @@
 
 class GameLevel {
 public:
-    GameLevel(GLFWwindow *window);
+    GameLevel(GLFWwindow *window, GUI *gui);
     ~GameLevel();
     virtual void init();
     virtual bool endCond();

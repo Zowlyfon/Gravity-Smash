@@ -120,7 +120,7 @@ void main()
     vec3 FragPos = vs_out.FragPos;
     vec3 aPos = vs_out.aPos.xyz;
 
-    vec3 fragColor = modelColor + fbm(aPos + fbm(aPos + fbm(aPos, modelColor), modelColor), modelColor);
+    vec3 fragColor = modelColor + fbm(aPos + fbm(aPos + fbm(aPos, modelColor), modelColor), modelColor) * 0.75f;
 
     float ambientStrength = 0.001f;
     vec3 ambient = ambientStrength * vec3(1.0f);

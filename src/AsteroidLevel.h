@@ -13,7 +13,7 @@
 
 class AsteroidLevel : public GameLevel {
 public:
-    AsteroidLevel(GLFWwindow *window);
+    explicit AsteroidLevel(GLFWwindow *window, GUI *gui);
     ~AsteroidLevel();
 
     void init() override;

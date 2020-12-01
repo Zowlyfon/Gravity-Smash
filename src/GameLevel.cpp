@@ -4,7 +4,7 @@
 
 #include "GameLevel.h"
 
-GameLevel::GameLevel(GLFWwindow *window) : window(window), prevScaleDivisor(0.0f)
+GameLevel::GameLevel(GLFWwindow *window, GUI *gui) : window(window), gui(gui), prevScaleDivisor(0.0f)
 {
 }
 
@@ -20,8 +20,6 @@ GameLevel::~GameLevel()
 void GameLevel::init()
 {
     background->init();
-    gui = new GUI();
-    gui->init(window);
     offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
 }
 
@@ -139,7 +137,7 @@ void GameLevel::end()
 
 void GameLevel::processInput(GLFWwindow *_window)
 {
-    GLfloat step = player->PhysicsObject::scale * 0.1;
+    GLfloat step = player->PhysicsObject::scale * 0.1f;
 
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         player->velocity.y += step;

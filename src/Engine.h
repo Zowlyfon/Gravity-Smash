@@ -30,6 +30,8 @@
 #include "GameLevel.h"
 #include "AsteroidLevel.h"
 #include "GameSettings.h"
+#include "SmallPlanetLevel.h"
+#include "GasGiantLevel.h"
 
 class Engine {
 public:
@@ -53,7 +55,10 @@ private:
 
     bool paused;
 
-    GameLevel *activeGameLevel;
+    GUI *gui;
+
+    std::vector<std::shared_ptr<GameLevel>> gameLevels;
+    std::shared_ptr<GameLevel> activeGameLevel;
 };
 
 

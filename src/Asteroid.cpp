@@ -11,4 +11,5 @@ Asteroid::Asteroid(Shader *shader, ComputeShader *computeShader, unsigned int su
     RenderObject::computeShader = computeShader;
 }
 
-Asteroid::~Asteroid()=default;
+Asteroid::~Asteroid()
+= default;
