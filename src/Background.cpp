@@ -4,7 +4,10 @@
 
 #include "Background.h"
 
-Background::Background()=default;
+Background::Background(Shader *shader) : playerPos(glm::vec3(0.0f))
+{
+    RenderObject::shader = shader;
+}
 
 Background::~Background()=default;
 

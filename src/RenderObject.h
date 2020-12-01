@@ -32,8 +32,8 @@ public:
     glm::vec3 color;
     GLfloat scale;
 
-    std::shared_ptr<Shader> shader;
-    std::shared_ptr<ComputeShader> computeShader;
+    Shader *shader;
+    ComputeShader *computeShader;
 
 protected:
     virtual void initBuffers();
@@ -46,7 +46,6 @@ protected:
     GLuint VAO;
     GLuint VBO;
     GLuint EBO;
-    GLuint NBO;
 };
 
 

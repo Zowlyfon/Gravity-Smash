@@ -8,7 +8,7 @@
 
 class Background : public RenderObject{
 public:
-    Background();
+    explicit Background(Shader *shader);
     ~Background();
     void init() override;
     void draw(float playerSize) override;

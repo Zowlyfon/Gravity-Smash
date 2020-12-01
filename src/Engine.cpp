@@ -5,8 +5,7 @@
 #include "Engine.h"
 
 Engine::Engine(int width, int height) :
-screenWidth(width), screenHeight(height), prevTime(0), window(nullptr),
-shader(nullptr), player(nullptr), paused(false), prevScaleDivisor(0.0f)
+screenWidth(width), screenHeight(height), window(nullptr)
 {
 
 }
@@ -37,19 +36,22 @@ void Engine::init()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 
-    shader = std::shared_ptr<Shader>(new Shader("asteroid.vert.glsl",
-                                                "asteroid.frag.glsl"));
+    /*
+    shader = std::make_shared<Shader>("asteroid.vert.glsl",
+                                      "asteroid.frag.glsl");
 
-    backgroundShader = std::shared_ptr<Shader>(new Shader("background.vert.glsl",
-                                                          "background.frag.glsl"));
+    backgroundShader = std::make_shared<Shader>("background.vert.glsl",
+                                                "background.frag.glsl");
 
-    computeShader = std::shared_ptr<ComputeShader>(new ComputeShader("asteroidNoise.comp.glsl"));
+    computeShader = std::make_shared<ComputeShader>("asteroidNoise.comp.glsl");
+    */
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    /* Implemented in Level
     std::shared_ptr<GameObject> playerSphere(new Asteroid(6));
     player = playerSphere;
 
@@ -65,12 +67,16 @@ void Engine::init()
 
     worldObjects.push_back(playerSphere);
 
-    std::vector<glm::vec3> spherePositions;
-
-    for(int i = 0; i < 256; i++) {
+    for(int i = 0; i < GameSettings::maxObjects; i++) {
         createRandomSphere();
     }
+    */
 
+    activeGameLevel = new AsteroidLevel(window);
+
+    activeGameLevel->init();
+
+    /*
     background = new Background();
     background->shader = backgroundShader;
     background->init();
@@ -79,23 +85,26 @@ void Engine::init()
     gui->init(window);
 
     offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
+    */
 }
 
+/*
 void Engine::physics()
 {
     auto time = glfwGetTime();
 
-    Physics::calculateGravity(&worldObjects, player, prevTime, time);
+    Physics::calculateGravity(worldObjects, player, prevTime, time);
 
-    Physics::calculateCollisions(&worldObjects, player);
+    Physics::calculateCollisions(worldObjects, player);
 
     for (const auto &object : worldObjects) {
         object->physics();
     }
 
-    Physics::calculateOutOfRange(&worldObjects, player);
-
+    Physics::calculateOutOfRange(worldObjects, player);
+    */
     /* Delete destroyed objects */
+    /*
     worldObjects.erase(
       std::remove_if(
         worldObjects.begin(),
@@ -106,26 +115,30 @@ void Engine::physics()
         worldObjects.end()
       );
 
-
+    */
     /* Randomly add new objects */
+    /*
     GLfloat random = Utility::randF2();
 
-    if (random > 0.95 && worldObjects.size() < 256) {
+    if (random > 0.95 && worldObjects.size() < gameSettings.maxObjects) {
         createRandomSphere();
-        if (worldObjects.size() < 128) {
+        if (worldObjects.size() < gameSettings.maxObjects / 2) {
             createRandomSphere();
         }
     }
+
 
     for (const auto &object : worldObjects) {
         object->PhysicsObject::scale = Physics::scaleFromMass(object->mass);
     }
 }
+*/
 
 void Engine::render()
 {
     glfwPollEvents();
 
+    /*
     float scaleFactor;
 
     if (prevScaleDivisor < player->baseSize &&
@@ -152,15 +165,14 @@ void Engine::render()
       0.1f,
       100.0f);
 
-    //glm::vec3 cameraPos = glm::vec3(player->position.x, player->position.y, player->scale * 15.0f + 15.0f);
     glm::vec3 cameraPos = glm::vec3(player->RenderObject::position.x / scaleFactor, player->RenderObject::position.y / scaleFactor, 25.0f);
 
     view = glm::lookAt(cameraPos,
                        player->RenderObject::position / scaleFactor,
                        glm::vec3(0.0f, 1.0f, 0.0f));
-
+    */
     /* Draw Background */
-
+    /*
     glm::vec3 offset2 = offset + (float)glfwGetTime() / 10.0f;
 
     glUseProgram(backgroundShader->getShaderProgram());
@@ -175,9 +187,9 @@ void Engine::render()
     background->draw(scaleFactor);
 
     glEnable(GL_CULL_FACE);
-
+    */
     /* Render Objects */
-
+    /*
     glm::vec3 lightPos = glm::vec3(player->RenderObject::position.x / scaleFactor, player->RenderObject::position.y / scaleFactor, 5.0f);
 
     glUseProgram(shader->getShaderProgram());
@@ -196,20 +208,25 @@ void Engine::render()
     for (auto const &object : worldObjects) {
         object->draw(scaleFactor);
     }
-
+    */
     /* Draw GUI */
-    gui->draw(player);
+    //gui->draw(player);
 
-    prevTime = glfwGetTime();
     glfwSwapBuffers(window);
+
+    glClearColor(0.05f, 0.05f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Engine::run()
 {
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
+        activeGameLevel->processInput(window);
 
-        physics();
+        //physics();
+
+        activeGameLevel->run();
 
         render();
     }
@@ -220,8 +237,9 @@ void Engine::frameBufferSizeCallback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void Engine::processInput(GLFWwindow *window)
+void Engine::processInput(GLFWwindow *_window)
 {
+    /*
     GLfloat step = player->PhysicsObject::scale * 0.1;
 
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -236,14 +254,17 @@ void Engine::processInput(GLFWwindow *window)
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         player->velocity.x += step;
     }
+    */
 
     if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         paused = !paused;
     }
 }
 
+/*
 void Engine::createRandomSphere()
 {
+
     std::shared_ptr<GameObject> sphere(new Asteroid());
     sphere->shader = shader;
     sphere->computeShader = computeShader;
@@ -265,4 +286,6 @@ void Engine::createRandomSphere()
     sphere->init();
 
     worldObjects.push_back(sphere);
+
 }
+*/

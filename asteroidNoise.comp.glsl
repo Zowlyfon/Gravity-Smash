@@ -127,8 +127,6 @@ void main() {
 
     vec3 vertex = vec3(outVertices[gl_GlobalInvocationID.x]);
 
-
-
     outVertices[gl_GlobalInvocationID.x] = vec4(vertex + fbm(vertex + fbm(vertex + fbm(vertex))), 1.0f);
 
 }

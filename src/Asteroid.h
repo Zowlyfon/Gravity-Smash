@@ -10,7 +10,7 @@
 
 class Asteroid : public GameObject {
 public:
-    Asteroid(unsigned int subs=4);
+    Asteroid(Shader *shader, ComputeShader *computeShader, unsigned int subs=4);
     ~Asteroid();
 };
 

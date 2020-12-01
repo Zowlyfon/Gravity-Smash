@@ -4,9 +4,11 @@
 
 #include "Asteroid.h"
 
-Asteroid::Asteroid(unsigned int subs)
+Asteroid::Asteroid(Shader *shader, ComputeShader *computeShader, unsigned int subs)
 {
     IcoSphere::subs = subs;
+    RenderObject::shader = shader;
+    RenderObject::computeShader = computeShader;
 }
 
 Asteroid::~Asteroid()=default;

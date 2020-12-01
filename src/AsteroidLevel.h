@@ -7,22 +7,21 @@
 
 #include "GameLevel.h"
 #include "GameObject.h"
+#include "Asteroid.h"
+#include "Physics.h"
+#include "GameSettings.h"
 
 class AsteroidLevel : public GameLevel {
 public:
-    AsteroidLevel(std::shared_ptr<GameObject> player,
-                  std::shared_ptr<std::vector<std::shared_ptr<GameObject>>> worldObjects);
+    AsteroidLevel(GLFWwindow *window);
     ~AsteroidLevel();
 
     void init() override;
-    void endCond() override;
+    void run() override;
+    bool endCond() override;
     void end() override;
 
     void addNewGameObject() override;
-
-    std::shared_ptr<GameObject> player;
-    std::shared_ptr<std::vector<std::shared_ptr<GameObject>>> worldObjects;
-
 };
 
 

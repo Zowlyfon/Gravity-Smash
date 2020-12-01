@@ -27,6 +27,9 @@
 #include "Physics.h"
 #include "Background.h"
 #include "GUI.h"
+#include "GameLevel.h"
+#include "AsteroidLevel.h"
+#include "GameSettings.h"
 
 class Engine {
 public:
@@ -34,38 +37,23 @@ public:
     ~Engine();
 
     void init();
-    void physics();
     void render();
     void run();
 
 private:
     static void frameBufferSizeCallback(GLFWwindow *window, int width, int height);
     void processInput(GLFWwindow *window);
-    void createRandomSphere();
+
+    GameSettings gameSettings;
 
     GLFWwindow *window;
-
-    std::shared_ptr<Shader> shader;
-    std::shared_ptr<Shader> backgroundShader;
-    std::shared_ptr<ComputeShader> computeShader;
-
-    std::vector<std::shared_ptr<GameObject>> worldObjects;
-    Background *background;
-
-    std::shared_ptr<GameObject> player;
-
-    GLdouble prevTime;
 
     int screenWidth;
     int screenHeight;
 
-    float prevScaleDivisor;
-
     bool paused;
 
-    GUI *gui;
-
-    glm::vec3 offset;
+    GameLevel *activeGameLevel;
 };
 
 

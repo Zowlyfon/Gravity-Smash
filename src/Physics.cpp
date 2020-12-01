@@ -4,17 +4,17 @@
 
 #include "Physics.h"
 
-void Physics::calculateGravity(std::vector<std::shared_ptr<GameObject>> *worldObjects,
+void Physics::calculateGravity(std::vector<std::shared_ptr<GameObject>> &worldObjects,
                                std::shared_ptr<GameObject> player,
                                GLdouble prevTime,
                                GLdouble time)
 {
     auto deltaT = time - prevTime;
-    std::for_each(std::execution::par_unseq, worldObjects->begin(), worldObjects->end(), [&](auto&& object1) {
+    std::for_each(std::execution::par_unseq, worldObjects.begin(), worldObjects.end(), [&](auto&& object1) {
         glm::vec2 force(0.0f);
         GLfloat G = 0.5;
 
-        for (const auto &object2 : *worldObjects) {
+        for (const auto &object2 : worldObjects) {
             if (object1 != object2) {
                 glm::vec2 r1 = glm::vec2(object1->PhysicsObject::position.x, object1->PhysicsObject::position.y);
                 glm::vec2 r2 = glm::vec2(object2->PhysicsObject::position.x, object2->PhysicsObject::position.y);
@@ -32,10 +32,10 @@ void Physics::calculateGravity(std::vector<std::shared_ptr<GameObject>> *worldOb
     });
 }
 
-void Physics::calculateCollisions(std::vector<std::shared_ptr<GameObject>> *worldObjects,
+void Physics::calculateCollisions(std::vector<std::shared_ptr<GameObject>> &worldObjects,
                                   std::shared_ptr<GameObject> player)
 {
-    for (const auto &object : *worldObjects) {
+    for (const auto &object : worldObjects) {
         if (object != player && !object->dead) {
             GLfloat length = glm::length(object->PhysicsObject::position - player->PhysicsObject::position);
             if (length < (object->PhysicsObject::scale + player->PhysicsObject::scale)) {
@@ -58,7 +58,7 @@ void Physics::calculateCollisions(std::vector<std::shared_ptr<GameObject>> *worl
             }
         }
 
-        for (const auto &object2 : *worldObjects) {
+        for (const auto &object2 : worldObjects) {
             if (!object2->dead && !object->dead && object2 != player && object != player && object != object2) {
                 GLfloat length = glm::length(object->PhysicsObject::position - object2->PhysicsObject::position);
 
@@ -76,10 +76,10 @@ void Physics::calculateCollisions(std::vector<std::shared_ptr<GameObject>> *worl
     }
 }
 
-void Physics::calculateOutOfRange(std::vector<std::shared_ptr<GameObject>> *worldObjects,
+void Physics::calculateOutOfRange(std::vector<std::shared_ptr<GameObject>> &worldObjects,
                                   std::shared_ptr<GameObject> player)
 {
-    for (const auto &object : *worldObjects) {
+    for (const auto &object : worldObjects) {
         if (object->dead && object != player) {
             GLfloat length = glm::length(object->PhysicsObject::position - player->PhysicsObject::position);
             if (length > player->PhysicsObject::scale * 1000.0f) {
