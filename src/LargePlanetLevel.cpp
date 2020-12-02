@@ -1,27 +1,31 @@
 //
-// Created by zowlyfon on 29/11/2020.
+// Created by zowlyfon on 02/12/2020.
 //
 
-#include "AsteroidLevel.h"
+#include "LargePlanetLevel.h"
 
-AsteroidLevel::AsteroidLevel(GLFWwindow *window, GUI *gui) : GameLevel(window, gui)
+LargePlanetLevel::LargePlanetLevel(GLFWwindow *window, GUI *gui) : GameLevel(window, gui)
 {
 
 }
 
-AsteroidLevel::~AsteroidLevel()
+LargePlanetLevel::~LargePlanetLevel()
 = default;
 
-void AsteroidLevel::init()
+void LargePlanetLevel::init()
 {
     shader = new Shader("generic.vert.glsl",
-                        "asteroid.frag.glsl");
+                        "largePlanet.frag.glsl");
 
-    computeShader = new ComputeShader("asteroidNoise.comp.glsl");
+    computeShader = new ComputeShader("largePlanetNoise.comp.glsl");
 
-    player = std::make_shared<Asteroid>(shader, computeShader, 6);
 
-    player->color = glm::vec3(0.15f, 0.14f, 0.14f);
+    player = std::make_shared<LargePlanet>(shader, computeShader, 5);
+
+    player->color = glm::vec3(0.4f, 0.4f, 0.4f);
+    player->color += glm::vec3(Utility::randF() / 5.0f,
+                               Utility::randF() / 5.0f,
+                               Utility::randF() / 5.0f);
     player->mass = 1.0f;
     player->PhysicsObject::scale = Physics::scaleFromMass(50);
     player->PhysicsObject::position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -33,27 +37,28 @@ void AsteroidLevel::init()
     initLevel();
 }
 
-void AsteroidLevel::run()
+void LargePlanetLevel::run()
 {
     runLevel();
 }
 
-bool AsteroidLevel::endCond()
+bool LargePlanetLevel::endCond()
 {
-    return player->PhysicsObject::scale >= 1000.0f * GameSettings::levelLength;
+    return player->PhysicsObject::scale >= 4000.0f * GameSettings::levelLength;
 }
 
-void AsteroidLevel::end()
+void LargePlanetLevel::end()
 {
+
 }
 
-void AsteroidLevel::addNewGameObject()
+void LargePlanetLevel::addNewGameObject()
 {
-    std::shared_ptr<GameObject> sphere(new Asteroid(shader, computeShader));
-    sphere->color = glm::vec3(0.15f, 0.14f, 0.14f);
-    sphere->color += glm::vec3(Utility::randF() / 20.0f,
-                               Utility::randF() / 100.0f,
-                               Utility::randF() / 100.0f);
+    std::shared_ptr<LargePlanet> sphere(new LargePlanet(shader, computeShader));
+    sphere->color = glm::vec3(0.4f, 0.4f, 0.4f);
+    sphere->color += glm::vec3(Utility::randF() / 5.0f,
+                               Utility::randF() / 5.0f,
+                               Utility::randF() / 5.0f);
 
     sphere->mass = (Utility::bias(Utility::randF2(), 0.9f + GameSettings::difficulty)) * player->mass * 200.0f + player->mass / 16;
     sphere->PhysicsObject::scale = Physics::scaleFromMass(sphere->mass);

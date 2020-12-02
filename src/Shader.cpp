@@ -22,9 +22,7 @@ Shader::Shader(std::string vShaderName, std::string fShaderName)
 }
 
 Shader::~Shader()
-{
-
-}
+= default;
 
 GLuint Shader::getShaderProgram()
 {
@@ -47,6 +45,7 @@ void Shader::initShader(GLuint *shader, std::string *shaderSource, GLenum shader
 
     if (!success) {
         glGetShaderInfoLog(*shader, 1024, NULL, infoLog);
+        std::cout << "Shader Error:\n" << infoLog << std::endl;
     }
 }
 
@@ -62,10 +61,11 @@ void Shader::linkShader()
 
     int success = 0;
     char infoLog[1024];
-    glGetShaderiv(shaderProgram, GL_COMPILE_STATUS, &success);
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 
     if (!success) {
-        glGetShaderInfoLog(shaderProgram, 1024, NULL, infoLog);
+        glGetProgramInfoLog(shaderProgram, 1024, NULL, infoLog);
+        std::cout << "Shader Error:\n" << infoLog << std::endl;
     }
 }
 

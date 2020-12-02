@@ -110,18 +110,35 @@ float snoise(vec3 v)
 void main() {
     vec3 FragPos = vs_out.FragPos;
 
-    float scaleFactor = 0.5f;
+    float scaleFactor = 0.25f;
 
-    vec3 noise0 = snoise((vec3(vs_out.aPos) + offset) * 2.0f) * modelColor * (scaleFactor / 2.0f);
+    vec3 noise0 = snoise((vec3(vs_out.aPos) + offset) * 4.0f) * modelColor * (scaleFactor / 4.0f);
     vec3 noise1 = snoise((vec3(vs_out.aPos) + offset) * 16.0f) * modelColor * (scaleFactor / 4.0f);
     vec3 noise2 = snoise((vec3(vs_out.aPos) + offset) * 32.0f) * modelColor * (scaleFactor / 8.0f);
     vec3 noise3 = snoise((vec3(vs_out.aPos) + offset) * 64.0f) * modelColor * (scaleFactor / 16.0f);
 
     float height = length(vs_out.aPos.xyz);
 
-    vec3 modelColor2 = mix(modelColor * 0.01f, modelColor * 1.2f, smoothstep(0.9f, 1.01f, height));
+    vec3 modelColor2;
+
+    float specularStrength = 0.01f;
+
+    if (height < 0.95f) {
+        modelColor2 = mix(modelColor * 0.05f, modelColor * 0.2f, smoothstep(0.95f, 1.0f, height));
+    } else if (height < 1.0f) {
+        modelColor2 = mix(modelColor * 0.2f, modelColor* 0.5f, smoothstep(1.0f, 1.05f, height));
+    } else if (height < 1.025f) {
+        modelColor2 = mix(modelColor * 0.5f, modelColor * 0.8f, smoothstep(1.0f, 1.025f, height));
+    } else {
+        modelColor2 = mix(modelColor * 0.8f, modelColor * 1.2f, smoothstep(1.025f, 1.2f, height));
+    }
+
+
+    //modelColor2 = mix(modelColor * 0.05f, modelColor * 1.2f, smoothstep(0.9f, 1.2f, height));
 
     vec3 fragColor = modelColor2 + noise0 + noise1 + noise2 + noise3;
+
+    //vec3 fragColor = modelColor2;
 
     float ambientStrength = 0.001f;
     vec3 ambient = ambientStrength * vec3(1.0f);
@@ -134,8 +151,6 @@ void main() {
     float attenuation = 1.0f / (0.05 * distance * distance);
 
     vec3 diffuse = diff * vec3(1.0f, 1.0f, 1.0f) * attenuation;
-
-    float specularStrength = 0.01f;
 
     vec3 viewDir = normalize(viewPos - vs_out.FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);

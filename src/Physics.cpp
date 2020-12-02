@@ -47,15 +47,10 @@ void Physics::calculateCollisions(std::vector<std::shared_ptr<GameObject>> &worl
                       0.0f);
                     player->velocity = glm::vec3(0.0f);
                 } else {
-                    if (object->mass > (player->mass / 2)) {
-                        player->velocity = player->velocity * player->mass + object->velocity * object->mass;
-                        player->mass += object->mass / 2;
-                    } else {
-                        player->velocity = player->velocity * player->mass + object->velocity * object->mass;
-                        player->mass += object->mass;
-                    }
-                    object->dead = true;
+                    player->velocity = player->velocity * player->mass + object->velocity * object->mass;
+                    player->mass += object->mass * GameSettings::massGain;
                     player->velocity = player->velocity / player->mass;
+                    object->dead = true;
                 }
                 player->updateMass();
             }

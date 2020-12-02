@@ -7,7 +7,8 @@
 GameObject::GameObject()
 {}
 
-GameObject::~GameObject()=default;
+GameObject::~GameObject()
+= default;
 
 void GameObject::init()
 {
@@ -108,6 +109,7 @@ void GameObject::runComputeShader()
     }
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glDeleteBuffers(1, &vertexSSBO);
 }
 
 void GameObject::updateMass()

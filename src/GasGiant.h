@@ -9,7 +9,7 @@
 
 class GasGiant : public GameObject {
 public:
-    GasGiant(Shader *shader, unsigned int subs=4);
+    explicit GasGiant(Shader *shader, unsigned int subs=4);
     ~GasGiant();
 
     void draw(float scaleFactor) override;

@@ -31,6 +31,7 @@
 #include "AsteroidLevel.h"
 #include "GameSettings.h"
 #include "SmallPlanetLevel.h"
+#include "LargePlanetLevel.h"
 #include "GasGiantLevel.h"
 
 class Engine {
@@ -45,8 +46,6 @@ public:
 private:
     static void frameBufferSizeCallback(GLFWwindow *window, int width, int height);
     void processInput(GLFWwindow *window);
-
-    GameSettings gameSettings;
 
     GLFWwindow *window;
 

@@ -6,6 +6,7 @@
 #define GAMEENGINE_GAMELEVEL_H
 
 #include "GameObject.h"
+#include "GameEffect.h"
 #include "GameSettings.h"
 #include "Physics.h"
 #include "Background.h"
@@ -15,6 +16,8 @@ class GameLevel {
 public:
     GameLevel(GLFWwindow *window, GUI *gui);
     ~GameLevel();
+    void initLevel();
+    void runLevel();
     virtual void init();
     virtual bool endCond();
     virtual void run();
@@ -29,9 +32,13 @@ public:
 
     std::shared_ptr<GameObject> player;
     std::vector<std::shared_ptr<GameObject>> worldObjects;
+    std::vector<std::shared_ptr<GameEffect>> worldEffects;
 
     Shader *shader;
     ComputeShader *computeShader;
+
+    Shader *effectShader;
+    ComputeShader *effectComputeShader;
 
     Shader *backgroundShader;
 

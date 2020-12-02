@@ -12,7 +12,7 @@ GasGiant::GasGiant(Shader *shader, unsigned int subs)
 }
 
 GasGiant::~GasGiant()
-=default;
+= default;
 
 void GasGiant::draw(float scaleFactor)
 {

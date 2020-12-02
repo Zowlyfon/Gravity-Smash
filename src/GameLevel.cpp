@@ -10,17 +10,57 @@ GameLevel::GameLevel(GLFWwindow *window, GUI *gui) : window(window), gui(gui), p
 
 GameLevel::~GameLevel()
 {
+    worldObjects.clear();
+    worldEffects.clear();
     delete shader;
     delete computeShader;
     delete backgroundShader;
     delete background;
-    delete gui;
+    delete effectShader;
+    delete effectComputeShader;
+}
+
+void GameLevel::initLevel()
+{
+    effectShader = new Shader("generic.vert.glsl",
+                        "rockEffect.frag.glsl");
+
+    effectComputeShader = new ComputeShader("rockEffect.comp.glsl");
+
+    for(int i = 0; i < GameSettings::maxObjects; i++) {
+        addNewGameObject();
+    }
+
+    backgroundShader = new Shader("background.vert.glsl",
+                                  "background.frag.glsl");
+
+    background = new Background(backgroundShader);
+    background->init();
+
+    offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
+}
+
+void GameLevel::runLevel()
+{
+    time = glfwGetTime();
+    processInput(window);
+    GLfloat random = Utility::randF2();
+
+    if (random > 0.95 && worldObjects.size() < GameSettings::maxObjects) {
+        addNewGameObject();
+        if (worldObjects.size() < GameSettings::maxObjects / 2) {
+            addNewGameObject();
+        }
+    }
+
+    physics();
+    draw();
+    prevTime = time;
 }
 
 void GameLevel::init()
 {
-    background->init();
-    offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
+
 }
 
 bool GameLevel::endCond()
@@ -30,10 +70,6 @@ bool GameLevel::endCond()
 
 void GameLevel::run()
 {
-    time = glfwGetTime();
-    physics();
-    draw();
-    prevTime = time;
 }
 
 void GameLevel::physics()
@@ -46,6 +82,13 @@ void GameLevel::physics()
         object->physics();
     }
 
+    for(const auto &effect : worldEffects) {
+        effect->physics();
+        if (effect->startTime + effect->lifespan < time) {
+            effect->dead = true;
+        }
+    }
+
     Physics::calculateOutOfRange(worldObjects, player);
 
     /* Delete destroyed objects */
@@ -53,11 +96,38 @@ void GameLevel::physics()
       std::remove_if(
         worldObjects.begin(),
         worldObjects.end(),
-        [=](auto &&object) {
-            return (object->dead || (object->PhysicsObject::scale < player->PhysicsObject::scale / 32.0f));
+        [&](auto &&object) {
+            if (object->dead || (object->PhysicsObject::scale < player->PhysicsObject::scale / 32.0f)) {
+                for (int i = 0; i < 10; i++) {
+                    auto effect = std::make_shared<GameEffect>(effectShader, effectComputeShader, 3);
+                    effect->velocity = glm::vec3(Utility::randF() * object->PhysicsObject::scale * 25.0f,
+                                                 Utility::randF() * object->PhysicsObject::scale * 25.0f,
+                                                 Utility::randF() * object->PhysicsObject::scale * 25.0f);
+                    effect->PhysicsObject::position = object->PhysicsObject::position;
+                    effect->color = object->color;
+                    effect->PhysicsObject::scale = object->PhysicsObject::scale / 8.0f;
+                    effect->startTime = time;
+                    effect->lifespan = 2.0f;
+                    effect->init();
+                    worldEffects.push_back(effect);
+                }
+                return true;
+            }
+            return false;
         }),
       worldObjects.end()
     );
+
+    worldEffects.erase(
+      std::remove_if(
+        worldEffects.begin(),
+        worldEffects.end(),
+        [&](auto &&object) {
+            return object->dead;
+        }),
+      worldEffects.end()
+    );
+
 
     for (const auto &object : worldObjects) {
         object->PhysicsObject::scale = Physics::scaleFromMass(object->mass);
@@ -123,8 +193,18 @@ void GameLevel::draw()
     glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
     glUniform1f(glGetUniformLocation(shader->getShaderProgram(), "playerScale"), player->RenderObject::scale);
 
-    for (auto const &object : worldObjects) {
+    for (const auto &object : worldObjects) {
         object->draw(scaleFactor);
+    }
+
+    glUseProgram(effectShader->getShaderProgram());
+    effectShader->setMat4("projection", &projection);
+    effectShader->setMat4("view", &view);
+    effectShader->setVec3("lightPos", &lightPos);
+    effectShader->setFloat("playerScale", player->RenderObject::scale);
+
+    for (const auto &effect : worldEffects) {
+        effect->draw(scaleFactor);
     }
 
     gui->draw(player);
@@ -137,7 +217,8 @@ void GameLevel::end()
 
 void GameLevel::processInput(GLFWwindow *_window)
 {
-    GLfloat step = player->PhysicsObject::scale * 0.1f;
+    GLdouble deltaT = time - prevTime;
+    GLfloat step = player->PhysicsObject::scale * 10.0f * deltaT;
 
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         player->velocity.y += step;

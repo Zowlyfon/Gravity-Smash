@@ -163,8 +163,8 @@ vec3 fbm(vec3 pos, vec3 color) {
     vec3 noise1 = snoise(pos * 2.0f) * color * 0.5f;
     vec3 noise2 = snoise(pos * 4.0f) * color * 0.25f;
     vec3 noise3 = snoise(pos * 8.0f) * color * 0.125f;
-    vec3 noise4 = snoise(pos * 16.0f) * color * (1.0f/16.0f);
-    return noise0 + noise1 + noise2 + noise3 + noise4;
+    //vec3 noise4 = snoise(pos * 16.0f) * color * (1.0f/16.0f);
+    return noise0 + noise1 + noise2 + noise3;
 }
 
 void main() {
@@ -177,25 +177,25 @@ void main() {
     vec3 noise = snoise(vs_out.FragPos) * vec3(0.8, 0.8, 0.8);
     vec3 noise2 = snoise(vs_out.FragPos / 2.0f) * vec3(0.8, 0.8, 0.8) / 2.0f;
 
-    vec3 redPos = (FragPos + offset + 3.5f) / 32.0f;
-    vec3 greenPos = (FragPos + offset + 6.7f) / 32.0f;
+    vec3 redPos = (FragPos + offset + 3.5f) / 64.0f;
+    //vec3 greenPos = (FragPos + offset + 6.7f) / 32.0f;
     vec3 bluePos = (FragPos + offset + 14.2f) / 32.0f;
 
-    vec3 redCol = vec3(0.5f, 0.0f, 0.0f);
-    vec3 greenCol = vec3(0.0f, 0.3f, 0.0f);
-    vec3 blueCol = vec3(0.0f, 0.0f, 0.2f);
+    vec3 redCol = vec3(0.9f, 0.0f, 0.0f);
+    //vec3 greenCol = vec3(0.0f, 0.3f, 0.0f);
+    vec3 blueCol = vec3(0.1f, 0.3f, 0.9f);
 
-    vec3 noiser = fbm(redPos + fbm(redPos + fbm(redPos, redCol), redCol), redCol);
-    vec3 noiseg = fbm(greenPos + fbm(greenPos + fbm(greenPos, greenCol), greenCol), greenCol);
-    vec3 noiseb = fbm(bluePos + fbm(bluePos + fbm(bluePos, blueCol), blueCol), blueCol);
+    vec3 noiser = fbm(redPos + fbm(redPos, redCol), redCol);
+    //vec3 noiseg = fbm(greenPos + fbm(greenPos + fbm(greenPos, greenCol), greenCol), greenCol);
+    vec3 noiseb = fbm(bluePos + fbm(bluePos, blueCol), blueCol);
 
-    vec3 maskPos = (FragPos + offset) / 16.0f;
+    vec3 maskPos = (FragPos + offset) / 256.0f;
     vec3 maskCol = vec3(1.0f);
 
-    vec3 noiseMask = fbm(maskPos + fbm(maskPos + fbm(maskPos, maskCol), maskCol), maskCol);
+    vec3 noiseMask = fbm(maskPos + fbm(maskPos, maskCol), maskCol);
 
 
     FragColor = vec4(
         abs(col) * (abs(noise) + abs(noise2)) +
-        (abs(noiser) + abs(noiseg) + abs(noiseb)) * noiseMask, 1.0);
+        (abs(noiser) + abs(noiseb)) * noiseMask, 1.0);
 }

@@ -7,7 +7,10 @@
 IcoSphere::IcoSphere(unsigned int subs) : subs(subs)
 {}
 
-IcoSphere::~IcoSphere()=default;
+IcoSphere::~IcoSphere() {
+    verticesMap.clear();
+    originalVertices.clear();
+};
 
 void IcoSphere::init()
 {

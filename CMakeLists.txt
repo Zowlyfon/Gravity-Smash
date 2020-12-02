@@ -62,7 +62,7 @@ add_executable(GameEngine
         src/SmallPlanetLevel.cpp
         src/SmallPlanetLevel.h
         src/SmallPlanet.cpp
-        src/SmallPlanet.h src/GasGiant.cpp src/GasGiant.h src/GasGiantLevel.cpp src/GasGiantLevel.h src/MenuLevel.cpp src/MenuLevel.h)
+        src/SmallPlanet.h src/GasGiant.cpp src/GasGiant.h src/GasGiantLevel.cpp src/GasGiantLevel.h src/MenuLevel.cpp src/MenuLevel.h src/GameEffect.cpp src/GameEffect.h src/LargePlanet.cpp src/LargePlanet.h src/LargePlanetLevel.cpp src/LargePlanetLevel.h)
 
 target_link_libraries(GameEngine
         glad
@@ -81,8 +81,11 @@ configure_file(background.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/background.vert.
 configure_file(asteroidNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/asteroidNoise.comp.glsl COPYONLY)
 configure_file(planetNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/planetNoise.comp.glsl COPYONLY)
 configure_file(planet.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/planet.frag.glsl COPYONLY)
-configure_file(planet.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/planet.vert.glsl COPYONLY)
 configure_file(atmosphere.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/atmosphere.frag.glsl COPYONLY)
 configure_file(atmosphere.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/atmosphere.vert.glsl COPYONLY)
 configure_file(gasGiant.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/gasGiant.frag.glsl COPYONLY)
-configure_file(gasGiant.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/gasGiant.vert.glsl COPYONLY)
+configure_file(generic.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/generic.vert.glsl COPYONLY)
+configure_file(rockEffect.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/rockEffect.frag.glsl COPYONLY)
+configure_file(rockEffect.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/rockEffect.comp.glsl COPYONLY)
+configure_file(largePlanet.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/largePlanet.frag.glsl COPYONLY)
+configure_file(largePlanetNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/largePlanetNoise.comp.glsl COPYONLY)

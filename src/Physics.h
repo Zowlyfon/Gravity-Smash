@@ -16,6 +16,7 @@
 
 #include "Utility.h"
 #include "GameObject.h"
+#include "GameSettings.h"
 
 class Physics {
 public:
