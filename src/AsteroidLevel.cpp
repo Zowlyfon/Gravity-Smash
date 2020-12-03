@@ -68,5 +68,5 @@ void AsteroidLevel::addNewGameObject()
 
     sphere->init();
 
-    worldObjects.push_back(sphere);
+    worldObjects.push_back(std::move(sphere));
 }

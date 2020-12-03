@@ -12,13 +12,8 @@ class LargePlanet : public GameObject {
 public:
     LargePlanet(Shader *shader,
                 ComputeShader *computeShader,
-                Shader *oceanShader,
                 unsigned int subs=4);
     ~LargePlanet();
-
-    void physics() override;
-    void draw(float scaleFactor) override;
-    Ocean *ocean;
 };
 
 
