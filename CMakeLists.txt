@@ -62,7 +62,7 @@ add_executable(GameEngine
         src/SmallPlanetLevel.cpp
         src/SmallPlanetLevel.h
         src/SmallPlanet.cpp
-        src/SmallPlanet.h src/GasGiant.cpp src/GasGiant.h src/GasGiantLevel.cpp src/GasGiantLevel.h src/MenuLevel.cpp src/MenuLevel.h src/GameEffect.cpp src/GameEffect.h src/LargePlanet.cpp src/LargePlanet.h src/LargePlanetLevel.cpp src/LargePlanetLevel.h)
+        src/SmallPlanet.h src/GasGiant.cpp src/GasGiant.h src/GasGiantLevel.cpp src/GasGiantLevel.h src/MenuLevel.cpp src/MenuLevel.h src/GameEffect.cpp src/GameEffect.h src/LargePlanet.cpp src/LargePlanet.h src/LargePlanetLevel.cpp src/LargePlanetLevel.h src/MenuGUI.cpp src/MenuGUI.h src/Ocean.cpp src/Ocean.h)
 
 target_link_libraries(GameEngine
         glad
@@ -89,3 +89,5 @@ configure_file(rockEffect.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/rockEffect.frag.
 configure_file(rockEffect.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/rockEffect.comp.glsl COPYONLY)
 configure_file(largePlanet.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/largePlanet.frag.glsl COPYONLY)
 configure_file(largePlanetNoise.comp.glsl ${CMAKE_CURRENT_BINARY_DIR}/largePlanetNoise.comp.glsl COPYONLY)
+configure_file(ocean.frag.glsl ${CMAKE_CURRENT_BINARY_DIR}/ocean.frag.glsl COPYONLY)
+configure_file(ocean.vert.glsl ${CMAKE_CURRENT_BINARY_DIR}/ocean.vert.glsl COPYONLY)

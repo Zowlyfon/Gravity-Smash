@@ -44,10 +44,7 @@ void Engine::init()
     gui = new GUI();
     gui->init(window);
 
-    gameLevels.push_back(std::make_shared<GasGiantLevel>(window, gui));
-    gameLevels.push_back(std::make_shared<LargePlanetLevel>(window, gui));
-    gameLevels.push_back(std::make_shared<SmallPlanetLevel>(window, gui));
-    //gameLevels.push_back(std::make_shared<AsteroidLevel>(window, gui));
+    gameLevels.push_back(std::make_shared<MenuLevel>(window, gui, gameLevels));
 
     activeGameLevel = gameLevels.back();
     gameLevels.pop_back();

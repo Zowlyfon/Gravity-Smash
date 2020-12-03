@@ -10,13 +10,16 @@
 #include "backends/imgui_impl_opengl3.h"
 
 #include "PhysicsObject.h"
+#include "GameSettings.h"
 
 class GUI {
 public:
     GUI();
     ~GUI();
     void init(GLFWwindow *window);
-    void draw(std::shared_ptr<PhysicsObject> player);
+    void startFrame();
+    void drawStats(std::shared_ptr<PhysicsObject> player);
+    void endFrame();
 private:
     GLdouble prevtime;
     unsigned int numFrames;

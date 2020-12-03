@@ -15,10 +15,13 @@ public:
 
     void init() override;
     void run() override;
+    void draw() override;
     bool endCond() override;
     void end() override;
 
     void addNewGameObject() override;
+
+    Shader *oceanShader;
 };
 
 

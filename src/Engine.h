@@ -33,6 +33,7 @@
 #include "SmallPlanetLevel.h"
 #include "LargePlanetLevel.h"
 #include "GasGiantLevel.h"
+#include "MenuLevel.h"
 
 class Engine {
 public:

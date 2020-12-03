@@ -12,7 +12,7 @@ void Physics::calculateGravity(std::vector<std::shared_ptr<GameObject>> &worldOb
     auto deltaT = time - prevTime;
     std::for_each(std::execution::par_unseq, worldObjects.begin(), worldObjects.end(), [&](auto&& object1) {
         glm::vec2 force(0.0f);
-        GLfloat G = 0.5;
+        GLfloat G = GameSettings::gravityConstant;
 
         for (const auto &object2 : worldObjects) {
             if (object1 != object2) {

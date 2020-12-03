@@ -6,11 +6,19 @@
 #define GAMEENGINE_LARGEPLANET_H
 
 #include "GameObject.h"
+#include "Ocean.h"
 
 class LargePlanet : public GameObject {
 public:
-    LargePlanet(Shader *shader, ComputeShader *computeShader, unsigned int subs=4);
+    LargePlanet(Shader *shader,
+                ComputeShader *computeShader,
+                Shader *oceanShader,
+                unsigned int subs=4);
     ~LargePlanet();
+
+    void physics() override;
+    void draw(float scaleFactor) override;
+    Ocean *ocean;
 };
 
 

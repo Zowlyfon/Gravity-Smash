@@ -4,7 +4,7 @@
 
 #include "GameLevel.h"
 
-GameLevel::GameLevel(GLFWwindow *window, GUI *gui) : window(window), gui(gui), prevScaleDivisor(0.0f)
+GameLevel::GameLevel(GLFWwindow *window, GUI *gui) : window(window), gui(gui), prevScaleDivisor(0.0f), startTime(0.0f)
 {
 }
 
@@ -38,6 +38,8 @@ void GameLevel::initLevel()
     background->init();
 
     offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
+
+    startTime = glfwGetTime();
 }
 
 void GameLevel::runLevel()
@@ -53,8 +55,14 @@ void GameLevel::runLevel()
         }
     }
 
-    physics();
+    if (time - startTime > 1.0f) {
+        physics();
+    } else if (player) {
+        player->velocity = glm::vec3(0.0f);
+    }
+    gui->startFrame();
     draw();
+    gui->endFrame();
     prevTime = time;
 }
 
@@ -136,6 +144,11 @@ void GameLevel::physics()
 
 void GameLevel::draw()
 {
+    drawLevel();
+}
+
+void GameLevel::drawLevel()
+{
     float scaleFactor;
 
     if (prevScaleDivisor < player->baseSize &&
@@ -150,8 +163,8 @@ void GameLevel::draw()
 
     prevScaleDivisor = scaleFactor;
 
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
+    view = glm::mat4(1.0f);
+    projection = glm::mat4(1.0f);
 
     projection = glm::perspective(
       glm::radians(45.0f),
@@ -180,7 +193,7 @@ void GameLevel::draw()
 
     glEnable(GL_CULL_FACE);
 
-    glm::vec3 lightPos = glm::vec3(player->RenderObject::position.x / scaleFactor, player->RenderObject::position.y / scaleFactor, 5.0f);
+    lightPos = glm::vec3(player->RenderObject::position.x / scaleFactor, player->RenderObject::position.y / scaleFactor, 5.0f);
 
     glUseProgram(shader->getShaderProgram());
 
@@ -207,7 +220,7 @@ void GameLevel::draw()
         effect->draw(scaleFactor);
     }
 
-    gui->draw(player);
+    gui->drawStats(player);
 }
 
 void GameLevel::end()
@@ -218,19 +231,22 @@ void GameLevel::end()
 void GameLevel::processInput(GLFWwindow *_window)
 {
     GLdouble deltaT = time - prevTime;
-    GLfloat step = player->PhysicsObject::scale * 10.0f * deltaT;
+    GLfloat step = player->PhysicsObject::scale * GameSettings::playerSpeed * deltaT;
 
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         player->velocity.y += step;
     }
-    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         player->velocity.x -= step;
     }
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         player->velocity.y -= step;
     }
-    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         player->velocity.x += step;
+    }
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+        player->velocity = glm::vec3(0.0f);
     }
 }
 

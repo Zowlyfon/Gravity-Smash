@@ -6,12 +6,12 @@
 
 namespace GameSettings
 {
-    unsigned int maxObjects = 128;
+    unsigned int maxObjects = 32;
     float screenWidth = 1920.0f;
     float screenHeight = 1080.0f;
     float gravityConstant = 0.5f;
     float playerSpeed = 10.0f;
     float levelLength = 1.0f;
-    float massGain = 1.0f;
+    float massGain = 0.5f;
     float difficulty = 0.0f;
 }

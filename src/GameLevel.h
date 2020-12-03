@@ -18,6 +18,7 @@ public:
     ~GameLevel();
     void initLevel();
     void runLevel();
+    void drawLevel();
     virtual void init();
     virtual bool endCond();
     virtual void run();
@@ -52,6 +53,12 @@ public:
     GUI *gui;
 
     glm::vec3 offset;
+
+    GLdouble startTime;
+
+    glm::mat4 projection;
+    glm::mat4 view;
+    glm::vec3 lightPos;
 };
 
 
