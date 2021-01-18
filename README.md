@@ -65,7 +65,7 @@ I implemented this using a naive n-body simulation, using
 formula that I learned during my A-Level physics.
 
 
-![Cube Image](/readme_images/3dballs.png?raw=true)
+![Cube Image](/readme_images/3balls.png?raw=true)
 
 
 Although the algorithm has an O(n<sup>2</sup>) complexity,
