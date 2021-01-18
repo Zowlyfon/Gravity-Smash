@@ -4,6 +4,7 @@
 
 #include "Utility.h"
 
+// TODO: Redo random with faster functions https://youtu.be/LWFzPP8ZbdU
 float Utility::randF()
 {
     std::random_device rd;

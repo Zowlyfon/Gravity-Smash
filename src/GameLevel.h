@@ -59,6 +59,8 @@ public:
     glm::mat4 projection;
     glm::mat4 view;
     glm::vec3 lightPos;
+
+    unsigned int framebuffer, texColorBuffer, rbo;
 };
 
 

@@ -6,7 +6,7 @@
 
 namespace GameSettings
 {
-    unsigned int maxObjects = 512;
+    unsigned int maxObjects = 128;
     float screenWidth = 1920.0f;
     float screenHeight = 1080.0f;
     float gravityConstant = 0.5f;

@@ -40,6 +40,8 @@ void GameLevel::initLevel()
     offset = glm::vec3(Utility::randF(), Utility::randF(), Utility::randF());
 
     startTime = glfwGetTime();
+
+    glGenBuffers(1, &framebuffer);
 }
 
 void GameLevel::runLevel()
@@ -182,9 +184,9 @@ void GameLevel::drawLevel()
 
     glUseProgram(backgroundShader->getShaderProgram());
 
-    glUniformMatrix4fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3fv(glGetUniformLocation(backgroundShader->getShaderProgram(), "offset"), 1, glm::value_ptr(offset2));
+    backgroundShader->setMat4("projection", &projection);
+    backgroundShader->setMat4("view", &view);
+    backgroundShader->setVec3("offset", &offset2);
 
     glDisable(GL_CULL_FACE);
 
@@ -197,14 +199,17 @@ void GameLevel::drawLevel()
 
     glUseProgram(shader->getShaderProgram());
 
-    glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "viewPos"), 1, glm::value_ptr(cameraPos));
+    //glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "viewPos"), 1, glm::value_ptr(cameraPos));
 
+    shader->setVec3("viewPos", &cameraPos);
     shader->setMat4("projection", &projection);
     shader->setMat4("view", &view);
+    shader->setVec3("lightPos", &lightPos);
+    shader->setFloat("playerScale", player->RenderObject::scale);
 
 
-    glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
-    glUniform1f(glGetUniformLocation(shader->getShaderProgram(), "playerScale"), player->RenderObject::scale);
+    //glUniform3fv(glGetUniformLocation(shader->getShaderProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
+    //glUniform1f(glGetUniformLocation(shader->getShaderProgram(), "playerScale"), player->RenderObject::scale);
 
     for (const auto &object : worldObjects) {
         object->draw(scaleFactor);
