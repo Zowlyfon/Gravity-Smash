@@ -146,10 +146,7 @@ Throughout the development process I have been constantly
 refactoring the code to ensure readability and good
 code structure.
 
-<details>
-    <summary>Image</summary>
-    ![Cube Image](/readme_images/final.png?raw=true)
-</details>
+![Cube Image](/readme_images/final.png?raw=true)
 
 ## Code Structure
 
