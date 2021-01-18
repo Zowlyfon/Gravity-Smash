@@ -59,7 +59,7 @@ a spinning cube, and then into a sphere.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/cube.png)
+    ![Cube Image](/readme_images/cube.png?raw=true)
 </details>
 
 Once I had my sphere it was time to add some gravity.
@@ -68,7 +68,7 @@ formula that I learned during my A-Level physics.
 
 <details>
     <summary>mage</summary>
-    ![Cube Image](/readme_images/3dballs.png)
+    ![Cube Image](/readme_images/3dballs.png?raw=true)
 </details>
 
 Although the algorithm has an O(n<sup>2</sup>) complexity,
@@ -79,7 +79,7 @@ when utilising all of my threads.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/manyballs.png)
+    ![Cube Image](/readme_images/manyballs.png?raw=true)
 </details>
 
 Using this data, I decided that the maximum number physical
@@ -89,7 +89,7 @@ allow it to run on older machines.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/3dcolouredballs.png)
+    ![Cube Image](/readme_images/3dcolouredballs.png?raw=true)
 </details>
 
 Next I added collisions, because the objects are all spheres,
@@ -109,7 +109,7 @@ weightings of each octave to produce a nice looking asteroid.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/funkyballs.png)
+    ![Cube Image](/readme_images/funkyballs.png?raw=true)
 </details>
 
 Then to calculate the new normals, I added a geometry shader
@@ -119,7 +119,7 @@ shader is unable to calculate the normals per vertex.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/smoothfunkyballs.png)
+    ![Cube Image](/readme_images/smoothfunkyballs.png?raw=true)
 </details>
 
 To overcome this I created a compute shader that added the 
@@ -135,7 +135,7 @@ surface of my sphere.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/asteroids.png)
+    ![Cube Image](/readme_images/asteroids.png?raw=true)
 </details>
 
 To do this I first generate an icosahedron, and normalise
@@ -146,7 +146,7 @@ making sure not to duplicate any vertices.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/firstbackground.png)
+    ![Cube Image](/readme_images/firstbackground.png?raw=true)
 </details>
 
 At this point I started working on adding other levels.
@@ -158,7 +158,7 @@ level from the level stack.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/acidbackground.png)
+    ![Cube Image](/readme_images/acidbackground.png?raw=true)
 </details>
 
 I decided to create a start menu, which allows the player
@@ -172,7 +172,7 @@ code structure.
 
 <details>
     <summary>Image</summary>
-    ![Cube Image](/readme_images/final.png)
+    ![Cube Image](/readme_images/final.png?raw=true)
 </details>
 
 ## Code Structure
