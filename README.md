@@ -57,9 +57,19 @@ essential features first. To that end I started by rendering
 a triangle to the screen, then turning that triangle into 
 a spinning cube, and then into a sphere.
 
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/cube.png)
+</details>
+
 Once I had my sphere it was time to add some gravity.
 I implemented this using a naive n-body simulation, using
 formula that I learned during my A-Level physics.
+
+<details>
+    <summary>mage</summary>
+    ![Cube Image](/readme_images/3dballs.png)
+</details>
 
 Although the algorithm has an O(n<sup>2</sup>) complexity,
 it is much easier to parallelise than the more efficient
@@ -67,10 +77,20 @@ variants. I found that my Ryzen 3700X CPU could run around
 300 - 400 particles on a single thread, and around 1200
 when utilising all of my threads.
 
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/manyballs.png)
+</details>
+
 Using this data, I decided that the maximum number physical
 objects in my game should be set to around 500, as this
 will leave plenty of room for other calculations and
 allow it to run on older machines.
+
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/3dcolouredballs.png)
+</details>
 
 Next I added collisions, because the objects are all spheres,
 collision detection is extremely simple. I then gave my
@@ -87,10 +107,20 @@ more like asteroids. To do this I added into my vertex
 shader some fractal simplex noise, and changed the
 weightings of each octave to produce a nice looking asteroid.
 
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/funkyballs.png)
+</details>
+
 Then to calculate the new normals, I added a geometry shader
 which calculates the normal for each triangle. Unfortunately
 this meant that the objects were flat shaded, as a geometry
 shader is unable to calculate the normals per vertex.
+
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/smoothfunkyballs.png)
+</details>
 
 To overcome this I created a compute shader that added the 
 noise to the vertices before they were rendered, then
@@ -103,11 +133,21 @@ sphere has a higher vertex density at it's poles, and
 it would be best if I had an equal vertex density over the
 surface of my sphere.
 
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/asteroids.png)
+</details>
+
 To do this I first generate an icosahedron, and normalise
 it's vertices so that they lie on the unit sphere.
 Then I wrote my own algorithm which subdivides each triangle
 and normalises the added vertices onto the unit sphere,
 making sure not to duplicate any vertices.
+
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/firstbackground.png)
+</details>
 
 At this point I started working on adding other levels.
 A level in code is an object which contains all of the
@@ -115,6 +155,11 @@ game state, as well as a completion condition.
 When the completion condition of a level is met, the 
 game engine destroys the level and fetches the next
 level from the level stack.
+
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/acidbackground.png)
+</details>
 
 I decided to create a start menu, which allows the player
 to change difficulty settings and tweak the underlying
@@ -124,6 +169,11 @@ implemented as it's own level in the game code.
 Throughout the development process I have been constantly
 refactoring the code to ensure readability and good
 code structure.
+
+<details>
+    <summary>Image</summary>
+    ![Cube Image](/readme_images/final.png)
+</details>
 
 ## Code Structure
 
